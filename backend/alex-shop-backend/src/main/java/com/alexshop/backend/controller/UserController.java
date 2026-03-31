@@ -1,5 +1,7 @@
 package com.alexshop.backend.controller;
 
+import com.alexshop.backend.dto.LoginRequest;
+import com.alexshop.backend.dto.LoginResponse;
 import com.alexshop.backend.entity.User;
 import com.alexshop.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +26,10 @@ public class UserController {
     @PutMapping
     public User updateUser(@RequestBody User user){
         return userService.updateUser(user);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        return userService.login(request);
     }
 }

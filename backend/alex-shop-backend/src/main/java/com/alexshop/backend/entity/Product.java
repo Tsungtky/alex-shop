@@ -22,4 +22,5 @@ public class Product {
     private Integer weight;
     private BigDecimal rating;
     private LocalDateTime createdAt;
+    private String imageUrl;
 }

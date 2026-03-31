@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="800" fill="white"/>
+  <ellipse cx="400" cy="470" rx="130" ry="22" fill="#E5E5E5"/>
+
+  <!-- sparkles -->
+  <path d="M265 238 L273 258 L293 266 L273 274 L265 294 L257 274 L237 266 L257 258 Z" fill="#4B5563"/>
+  <path d="M235 302 L240 316 L254 321 L240 326 L235 340 L230 326 L216 321 L230 316 Z" fill="#6B7280"/>
+  <path d="M255 356 L259 366 L269 370 L259 374 L255 384 L251 374 L241 370 L251 366 Z" fill="#9CA3AF"/>
+
+  <!-- bag body -->
+  <path d="M315 290 L485 290 L515 455 C518 473 504 488 486 488 H314 C296 488 282 473 285 455 L315 290 Z"
+        fill="#BDBDBD" stroke="#444444" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- side fold -->
+  <path d="M315 290 L285 455 L314 488 L330 300 Z"
+        fill="#8F8F8F" stroke="#444444" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- handles -->
+  <path d="M360 290 C360 230 385 205 400 205 C415 205 440 230 440 290"
+        stroke="#444444" stroke-width="12" stroke-linecap="round"/>
+  <path d="M335 290 C335 215 370 180 400 180 C430 180 465 215 465 290"
+        stroke="#444444" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- handle joints -->
+  <circle cx="360" cy="290" r="9" fill="#444444"/>
+  <circle cx="440" cy="290" r="9" fill="#444444"/>
+
+  <!-- checkmark -->
+  <path d="M365 385 L395 415 L455 355"
+        stroke="white" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M370 392 L397 418 L459 357"
+        stroke="#8A8A8A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
+
+  <!-- brand text -->
+  <text x="400" y="630" text-anchor="middle"
+        font-family="Inter, Arial, Helvetica, sans-serif"
+        font-size="92" font-weight="700" fill="#4A4A4A">Alex<tspan fill="#8A8A8A">Shop</tspan></text>
+</svg>
