@@ -5,10 +5,20 @@ import com.alexshop.backend.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CouponService {
     private final CouponRepository couponRepository;
+
+    public List<Coupon> getAllCoupons(){
+        return couponRepository.findAll();
+    }
+
+    public Coupon createCoupon(Coupon coupon){
+        return couponRepository.save(coupon);
+    }
 
     public Coupon getCouponByCode(String code){
         return couponRepository.findByCode(code);

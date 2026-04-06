@@ -4,6 +4,7 @@ import com.alexshop.backend.entity.Order;
 import com.alexshop.backend.entity.Product;
 import com.alexshop.backend.entity.User;
 import com.alexshop.backend.service.OrderService;
+import com.alexshop.backend.service.ShippingRateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    private final ShippingRateService shippingRateService;
 
     //Admin can see all orders
     @GetMapping
@@ -33,13 +35,20 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
+    @GetMapping("/shipping-fee")
+    public Integer getShippingFee(@RequestParam String country, @RequestParam Integer userId) {
+        Integer totalWeight = shippingRateService.calculateTotalWeight(userId);
+        return shippingRateService.calculateShippingFee(country, totalWeight);
+    }
+
     @PostMapping
     public Order createOrder(@RequestBody Order order){
         User user = order.getUser();
         Integer userId = user.getId();
         String couponCode = order.getCouponCode();
         String shippingCountry = order.getShippingCountry();
-        return orderService.createOrder(userId, couponCode, shippingCountry);
+        String shippingAddress = order.getShippingAddress();
+        return orderService.createOrder(userId, couponCode, shippingCountry, shippingAddress);
     }
     //Admin can update order status
     @PutMapping("/{id}")

@@ -28,4 +28,5 @@ public class Order {
     private String couponCode;
     private String shippingCountry;
     private LocalDateTime createdAt;
+    private String shippingAddress;
 }

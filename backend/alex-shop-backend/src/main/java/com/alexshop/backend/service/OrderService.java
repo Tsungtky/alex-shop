@@ -53,7 +53,7 @@ public class OrderService {
     //Create order. Need inject Repositories and Services
     //including CartItem, OrderItem, Coupon, ShippingFee
     //Need to know who is placing order, coupon used, delivery country
-    public Order createOrder(Integer userId, String couponCode, String shippingCountry){
+    public Order createOrder(Integer userId, String couponCode, String shippingCountry, String shippingAddress){
         List<CartItem> cartItemList = cartItemRepository.findByUserId(userId);
         Integer totalAmount = 0;
         Integer totalWeight = shippingRateService.calculateTotalWeight(userId);
@@ -84,6 +84,7 @@ public class OrderService {
         order.setDiscountAmount(discountAmount);
         order.setCouponCode(couponCode);
         order.setShippingCountry(shippingCountry);
+        order.setShippingAddress(shippingAddress);
         order.setCreatedAt(LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 

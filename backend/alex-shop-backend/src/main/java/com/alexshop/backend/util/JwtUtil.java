@@ -13,10 +13,11 @@ public class JwtUtil {
             "alexshop-secret-key-must-be-32-bytes!!".getBytes()
     );
 
-    public String generateToken(Integer userId, String email) {
+    public String generateToken(Integer userId, String email, String role) {
         return Jwts.builder()
                 .subject(email)
                 .claim("userId", userId)
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 *24))
                 .signWith(key)

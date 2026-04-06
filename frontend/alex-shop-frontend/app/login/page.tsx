@@ -28,8 +28,13 @@ export default function LoginPage() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", String(res.data.userId));
       localStorage.setItem("username", res.data.username);
+      localStorage.setItem("role", res.data.role);
 
-      router.push("/");
+      if (res.data.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || "Login Failed");
     }

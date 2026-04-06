@@ -26,6 +26,14 @@ public class ProductService {
     //Add new product
     public Product addNewProduct(Product product){
         product.setCreatedAt(LocalDateTime.now());
+        product.setStatus("active");
+        return productRepository.save(product);
+    }
+
+    //Archive product (soft delete)
+    public Product archiveProduct(Integer productId){
+        Product product = productRepository.findById(productId).orElseThrow();
+        product.setStatus("archived");
         return productRepository.save(product);
     }
 

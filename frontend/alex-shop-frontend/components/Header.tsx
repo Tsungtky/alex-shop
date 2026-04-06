@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const pathname = usePathname();
 
-  const hideHeader = pathname === "/login" || pathname === "/register";
+  const hideHeader = pathname === "/login" || pathname === "/register" || pathname.startsWith("/admin");
   if (hideHeader) return null;
 
   return (

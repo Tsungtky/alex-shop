@@ -33,6 +33,11 @@ public class ProductController {
         return productService.updateProduct(product);
     }
 
+    @PutMapping("/{id}/archive")
+    public Product archiveProduct(@PathVariable Integer id){
+        return productService.archiveProduct(id);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Integer id){
          productService.deleteProductById(id);

@@ -23,4 +23,5 @@ public class Product {
     private BigDecimal rating;
     private LocalDateTime createdAt;
     private String imageUrl;
+    private String status; // "active" or "archived"
 }
