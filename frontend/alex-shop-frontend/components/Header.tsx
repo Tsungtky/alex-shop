@@ -1,10 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("token"));
+  }, [pathname]);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setIsLoggedIn(false);
+    router.push("/login");
+  };
 
   const hideHeader = pathname === "/login" || pathname === "/register" || pathname.startsWith("/admin");
   if (hideHeader) return null;
@@ -26,18 +39,29 @@ export default function Header() {
         </Link>
       </div>
       <div className="flex items-center gap-4">
-        <Link
-          href="/login"
-          className="text-sm text-stone-600 hover:text-stone-900 transition"
-        >
-          ログイン
-        </Link>
-        <Link
-          href="/register"
-          className="text-sm bg-stone-800 text-white px-4 py-2 rounded-full hover:bg-stone-900 transition"
-        >
-          登録
-        </Link>
+        {isLoggedIn ? (
+          <button
+            onClick={handleLogout}
+            className="text-sm text-stone-600 hover:text-stone-900 transition"
+          >
+            ログアウト
+          </button>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="text-sm text-stone-600 hover:text-stone-900 transition"
+            >
+              ログイン
+            </Link>
+            <Link
+              href="/register"
+              className="text-sm bg-stone-800 text-white px-4 py-2 rounded-full hover:bg-stone-900 transition"
+            >
+              登録
+            </Link>
+          </>
+        )}
         <Link
           href="/cart"
           className="text-sm text-stone-600 hover:text-stone-900 transition"
