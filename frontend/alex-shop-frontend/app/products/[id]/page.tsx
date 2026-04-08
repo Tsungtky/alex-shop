@@ -6,6 +6,7 @@ type Product = {
   price: number;
   imageUrl: string;
   category: string;
+  stock: number;
 };
 
 export default async function ProductPage({
@@ -36,7 +37,7 @@ export default async function ProductPage({
           <p className="text-2xl text-stone-700">
             ¥{product.price.toLocaleString()}
           </p>
-          <AddToCart productId={product.id} />
+          <AddToCart productId={product.id} stock={product.stock} />
         </div>
       </div>
     </div>

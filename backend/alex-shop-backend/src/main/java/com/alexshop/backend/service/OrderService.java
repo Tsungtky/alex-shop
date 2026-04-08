@@ -2,6 +2,7 @@ package com.alexshop.backend.service;
 
 import com.alexshop.backend.entity.*;
 import com.alexshop.backend.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class OrderService {
     private final CouponService couponService;
     private final ShippingRateService shippingRateService;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     // Admin can see all orders
     public List<Order> getAllOrders(){
@@ -44,17 +46,46 @@ public class OrderService {
     }
 
     // Cancel order
+    @Transactional
     public Order cancelOrder(Integer orderId){
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus("cancelled");
+
+        // 還原庫存
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = item.getProduct();
+            product.setStock(product.getStock() + item.getQuantity());
+            productRepository.save(product);
+        }
+
         return orderRepository.save(order);
+    }
+
+    // 下單前檢查庫存
+    public void checkStock(Integer userId) {
+        List<CartItem> cartItemList = cartItemRepository.findByUserId(userId);
+        for (CartItem item : cartItemList) {
+            Product product = item.getProduct();
+            if (product.getStock() < item.getQuantity()) {
+                throw new RuntimeException(product.getNameJa() + " の在庫が不足しています");
+            }
+        }
     }
 
     //Create order. Need inject Repositories and Services
     //including CartItem, OrderItem, Coupon, ShippingFee
     //Need to know who is placing order, coupon used, delivery country
+    @Transactional(rollbackOn = Exception.class)
     public Order createOrder(Integer userId, String couponCode, String shippingCountry, String shippingAddress){
         List<CartItem> cartItemList = cartItemRepository.findByUserId(userId);
+
+        // 檢查庫存
+        for (CartItem item : cartItemList) {
+            Product product = item.getProduct();
+            if (product.getStock() < item.getQuantity()) {
+                throw new RuntimeException(product.getNameJa() + " の在庫が不足しています");
+            }
+        }
         Integer totalAmount = 0;
         Integer totalWeight = shippingRateService.calculateTotalWeight(userId);
         for (CartItem item : cartItemList){
@@ -88,7 +119,7 @@ public class OrderService {
         order.setCreatedAt(LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
-        //Save items to orderItem
+        //Save items to orderItem and deduct stock
         for(CartItem item : cartItemList){
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
@@ -96,6 +127,11 @@ public class OrderService {
             orderItem.setQuantity(item.getQuantity());
             orderItem.setUnitPrice(item.getProduct().getPrice());
             orderItemRepository.save(orderItem);
+
+            // 扣庫存
+            Product product = item.getProduct();
+            product.setStock(product.getStock() - item.getQuantity());
+            productRepository.save(product);
         }
 
         // Clear the cart after order is placed

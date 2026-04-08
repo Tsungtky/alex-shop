@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import axios from "axios";
+import Toast from "@/components/Toast";
 
-export default function AddToCart({ productId }: { productId: number }) {
+export default function AddToCart({ productId, stock }: { productId: number; stock: number }) {
   const [quantity, setQuantity] = useState(1);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
-      alert("ログインしてください。");
+      setToast({ message: "ログインしてください。", type: "error" });
       return;
     }
 
@@ -19,14 +21,15 @@ export default function AddToCart({ productId }: { productId: number }) {
         product: { id: Number(productId) },
         quantity: quantity,
       });
-      alert("カートに追加しました！");
+      setToast({ message: "カートに追加しました！", type: "success" });
     } catch (err: any) {
-      alert(err.response?.data?.message || "エラーが発生しました");
+      setToast({ message: err.response?.data?.error || "エラーが発生しました", type: "error" });
     }
   };
 
   return (
     <div className="flex flex-col gap-4">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <div className="flex items-center gap-4">
         <button
           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -38,15 +41,20 @@ export default function AddToCart({ productId }: { productId: number }) {
           {quantity}
         </span>
         <button
-          onClick={() => setQuantity((q) => q + 1)}
-          className="w-8 h-8 rounded-full border border-stone-300 text-stone-600 hover:bg-stone-100 transition"
+          onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+          disabled={quantity >= stock}
+          className="w-8 h-8 rounded-full border border-stone-300 text-stone-600 hover:bg-stone-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ＋
         </button>
       </div>
+      {stock === 0 && (
+        <p className="text-xs text-red-400 tracking-widest">在庫切れ</p>
+      )}
       <button
         onClick={handleAddToCart}
-        className="bg-stone-800 hover:bg-stone-900 text-white py-3 px-8 rounded-full text-sm tracking-widest transition"
+        disabled={stock === 0}
+        className="bg-stone-800 hover:bg-stone-900 text-white py-3 px-8 rounded-full text-sm tracking-widest transition disabled:opacity-40 disabled:cursor-not-allowed"
       >
         カートに追加
       </button>

@@ -1,5 +1,6 @@
 package com.alexshop.backend.controller;
 
+import com.alexshop.backend.dto.PaymentRequestDto;
 import com.alexshop.backend.service.PaymentService;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/create-payment-intent")
-    public String createIntent(@RequestBody Integer amount) throws StripeException {
-        return paymentService.createPaymentIntent(amount);
+    public String createIntent(@RequestBody PaymentRequestDto request) throws StripeException {
+        return paymentService.createPaymentIntent(request);
     }
 }

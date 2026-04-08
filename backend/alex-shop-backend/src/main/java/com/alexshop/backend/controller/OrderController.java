@@ -41,6 +41,11 @@ public class OrderController {
         return shippingRateService.calculateShippingFee(country, totalWeight);
     }
 
+    @GetMapping("/check-stock")
+    public void checkStock(@RequestParam Integer userId) {
+        orderService.checkStock(userId);
+    }
+
     @PostMapping
     public Order createOrder(@RequestBody Order order){
         User user = order.getUser();

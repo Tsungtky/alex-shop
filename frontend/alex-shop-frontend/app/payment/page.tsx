@@ -31,6 +31,7 @@ function CheckoutForm() {
             return;
         }
 
+
         if (paymentIntent?.status === "succeeded") {
             // 付款成功 → 建立 order
             const userId = localStorage.getItem("userId");
@@ -38,19 +39,23 @@ function CheckoutForm() {
             const shippingAddress = localStorage.getItem("shippingAddress");
             const couponCode = localStorage.getItem("couponCode");
 
-            await axios.post("http://localhost:8080/api/orders", {
-                user: { id: Number(userId) },
-                shippingCountry,
-                shippingAddress,
-                couponCode,
-            });
+            try {
+                await axios.post("http://localhost:8080/api/orders", {
+                    user: { id: Number(userId) },
+                    shippingCountry,
+                    shippingAddress,
+                    couponCode,
+                });
 
-            // 清除暫存資料
-            localStorage.removeItem("shippingCountry");
-            localStorage.removeItem("shippingAddress");
-            localStorage.removeItem("couponCode");
+                // 清除暫存資料
+                localStorage.removeItem("shippingCountry");
+                localStorage.removeItem("shippingAddress");
+                localStorage.removeItem("couponCode");
 
-            router.push("/orders");
+                router.push("/orders");
+            } catch (err: any) {
+                alert(err.response?.data?.error || "注文の作成に失敗しました");
+            }
         }
 
         setLoading(false);
@@ -74,12 +79,19 @@ function CheckoutForm() {
 export default function PaymentPage() {
     const searchParams = useSearchParams();
     const clientSecret = searchParams.get("client_secret");
+    const amount = searchParams.get("amount");
 
     if (!clientSecret) return null;
 
     return (
         <div className="max-w-lg mx-auto px-8 py-12">
             <h1 className="text-2xl font-light text-stone-800 tracking-widest mb-8">お支払い</h1>
+            {amount && (
+                <div className="bg-stone-100 rounded-xl px-6 py-4 mb-8 flex justify-between items-center">
+                    <span className="text-stone-500 text-sm tracking-widest">お支払い金額</span>
+                    <span className="text-2xl font-light text-stone-800">¥{Number(amount).toLocaleString()}</span>
+                </div>
+            )}
             <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <CheckoutForm />
             </Elements>

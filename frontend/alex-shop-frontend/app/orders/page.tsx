@@ -22,7 +22,7 @@ export default function OrdersPage() {
         }
         const fetchOrders = async () => {
             const res = await axios.get(`http://localhost:8080/api/orders/user/${userId}`);
-            setOrders(res.data);
+            setOrders(res.data.sort((a: Order, b: Order) => b.id - a.id));
         };
         fetchOrders();
     }, []);
