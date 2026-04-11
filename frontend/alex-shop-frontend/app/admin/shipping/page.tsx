@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 
 type ShippingRate = {
@@ -21,19 +21,17 @@ export default function AdminShippingPage() {
     const router = useRouter();
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
-        if (role !== "admin") { router.push("/"); return; }
         fetchRates();
     }, []);
 
     const fetchRates = async () => {
-        const res = await axios.get("http://localhost:8080/api/shippingRate");
+        const res = await api.get("/api/shippingRate");
         setRates(res.data);
     };
 
     const handleSubmit = async () => {
         try {
-            await axios.post("http://localhost:8080/api/shippingRate", {
+            await api.post("/api/shippingRate", {
                 ...form,
                 baseFee: Number(form.baseFee),
                 perKgFee: Number(form.perKgFee),
@@ -48,7 +46,7 @@ export default function AdminShippingPage() {
 
     const handleDelete = async (id: number) => {
         if (!confirm("削除しますか？")) return;
-        await axios.delete(`http://localhost:8080/api/shippingRate/${id}`);
+        await api.delete(`/api/shippingRate/${id}`);
         fetchRates();
     };
 

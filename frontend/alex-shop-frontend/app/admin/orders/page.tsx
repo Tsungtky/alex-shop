@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type Order = {
     id: number;
-    user: { username: string };
+    user: { firstName: string; lastName: string };
     status: string;
     createdAt: string;
     totalAmount: number;
@@ -19,13 +19,8 @@ export default function AdminOrdersPage() {
 
     useEffect(() => {
         const fetchOrderList = async () => {
-            const role = localStorage.getItem("role");
-            if (role !== "admin") {
-                router.push("/");
-                return;
-            }
             try {
-                const res = await axios.get("http://localhost:8080/api/orders");
+                const res = await api.get("/api/orders");
                 setOrderList(res.data);
             } catch (err) {
                 console.error(err);
@@ -46,7 +41,7 @@ export default function AdminOrdersPage() {
                     >
                         <div className="flex flex-col gap-1">
                             <p className="text-xs text-stone-400 tracking-widest">注文番号 #{order.id}</p>
-                            <p className="text-stone-800 font-light">{order.user?.username}</p>
+                            <p className="text-stone-800 font-light">{order.user?.firstName} {order.user?.lastName}</p>
                             <p className="text-xs text-stone-400">{order.createdAt?.slice(0, 10)}</p>
                         </div>
                         <div className="flex items-center gap-4">

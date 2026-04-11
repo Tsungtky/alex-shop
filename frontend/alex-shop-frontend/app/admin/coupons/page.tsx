@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 
 type Coupon = {
@@ -29,19 +29,17 @@ export default function AdminCouponsPage() {
     const router = useRouter();
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
-        if (role !== "admin") { router.push("/"); return; }
         fetchCoupons();
     }, []);
 
     const fetchCoupons = async () => {
-        const res = await axios.get("http://localhost:8080/api/coupons");
+        const res = await api.get("/api/coupons");
         setCoupons(res.data);
     };
 
     const handleSubmit = async () => {
         try {
-            await axios.post("http://localhost:8080/api/coupons", {
+            await api.post("/api/coupons", {
                 ...form,
                 value: Number(form.value),
                 minOrder: Number(form.minOrder),

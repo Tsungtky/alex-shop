@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import axios from "axios";
+import api from "@/lib/axios";
 
 type Order = {
     id: number;
@@ -21,7 +21,7 @@ export default function OrdersPage() {
             return;
         }
         const fetchOrders = async () => {
-            const res = await axios.get(`http://localhost:8080/api/orders/user/${userId}`);
+            const res = await api.get(`/api/orders/user/${userId}`);
             setOrders(res.data.sort((a: Order, b: Order) => b.id - a.id));
         };
         fetchOrders();

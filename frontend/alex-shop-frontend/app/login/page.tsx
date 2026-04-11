@@ -8,7 +8,7 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -21,14 +21,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post("http://localhost:8080/api/users/login", {
+      const res = await api.post("/api/users/login", {
         email,
         password,
       });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", String(res.data.userId));
-      localStorage.setItem("username", res.data.username);
+      localStorage.setItem("firstName", res.data.firstName);
+      localStorage.setItem("lastName", res.data.lastName);
       localStorage.setItem("role", res.data.role);
+      document.cookie = `role=${res.data.role}; path=/`;
 
       if (res.data.role === "admin") {
         router.push("/admin");

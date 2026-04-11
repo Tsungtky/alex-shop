@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useParams, useRouter } from "next/navigation";
 
 type OrderItem = {
@@ -16,7 +16,7 @@ type OrderItem = {
 
 type Order = {
     id: number;
-    user: { username: string; email: string };
+    user: { firstName: string; lastName: string; email: string };
     status: string;
     totalAmount: number;
     shippingFee: number;
@@ -36,14 +36,9 @@ export default function AdminOrderDetailPage() {
     const router = useRouter();
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
-        if (role !== "admin") {
-            router.push("/");
-            return;
-        }
         const fetchOrder = async () => {
             try {
-                const res = await axios.get(`http://localhost:8080/api/orders/${id}`);
+                const res = await api.get(`/api/orders/${id}`);
                 setOrder(res.data);
                 setSelectedStatus(res.data.status);
             } catch (err) {
@@ -55,7 +50,7 @@ export default function AdminOrderDetailPage() {
 
     const handleUpdateStatus = async () => {
         try {
-            await axios.put(`http://localhost:8080/api/orders/${id}?status=${selectedStatus}`);
+            await api.put(`/api/orders/${id}?status=${selectedStatus}`);
             setOrder((prev) => prev ? { ...prev, status: selectedStatus } : prev);
             alert("ステータスを更新しました");
         } catch (err) {
@@ -66,7 +61,7 @@ export default function AdminOrderDetailPage() {
     const handleCancel = async () => {
         if (!confirm("この注文をキャンセルしますか？")) return;
         try {
-            await axios.put(`http://localhost:8080/api/orders/${id}/cancel`);
+            await api.put(`/api/orders/${id}/cancel`);
             setOrder((prev) => prev ? { ...prev, status: "cancelled" } : prev);
         } catch (err) {
             alert("キャンセルに失敗しました");
@@ -87,7 +82,7 @@ export default function AdminOrderDetailPage() {
                 <div className="border border-stone-200 rounded-xl p-6 flex flex-col gap-4">
                     <div className="flex justify-between items-center border-b border-stone-100 pb-4">
                         <p className="text-xs tracking-widest text-stone-500">顧客</p>
-                        <p className="text-sm text-stone-700">{order.user?.username} / {order.user?.email}</p>
+                        <p className="text-sm text-stone-700">{order.user?.firstName} {order.user?.lastName} / {order.user?.email}</p>
                     </div>
                     <div className="flex justify-between items-center border-b border-stone-100 pb-4">
                         <p className="text-xs tracking-widest text-stone-500">注文日</p>

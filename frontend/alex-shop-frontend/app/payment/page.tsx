@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import axios from "axios";
+import api from "@/lib/axios";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -35,22 +35,38 @@ function CheckoutForm() {
         if (paymentIntent?.status === "succeeded") {
             // 付款成功 → 建立 order
             const userId = localStorage.getItem("userId");
+            const couponCode = localStorage.getItem("couponCode");
+            const shippingFirstName = localStorage.getItem("shippingFirstName");
+            const shippingLastName = localStorage.getItem("shippingLastName");
+            const shippingPhoneCountryCode = localStorage.getItem("shippingPhoneCountryCode");
+            const shippingPhone = localStorage.getItem("shippingPhone");
             const shippingCountry = localStorage.getItem("shippingCountry");
             const shippingAddress = localStorage.getItem("shippingAddress");
-            const couponCode = localStorage.getItem("couponCode");
+            const shippingApartment = localStorage.getItem("shippingApartment");
+            const shippingCity = localStorage.getItem("shippingCity");
+            const shippingState = localStorage.getItem("shippingState");
+            const shippingPostalCode = localStorage.getItem("shippingPostalCode");
 
             try {
-                await axios.post("http://localhost:8080/api/orders", {
+                await api.post("/api/orders", {
                     user: { id: Number(userId) },
+                    couponCode,
+                    shippingFirstName,
+                    shippingLastName,
+                    shippingPhoneCountryCode,
+                    shippingPhone,
                     shippingCountry,
                     shippingAddress,
-                    couponCode,
+                    shippingApartment,
+                    shippingCity,
+                    shippingState,
+                    shippingPostalCode,
                 });
 
                 // 清除暫存資料
-                localStorage.removeItem("shippingCountry");
-                localStorage.removeItem("shippingAddress");
-                localStorage.removeItem("couponCode");
+                ["shippingFirstName","shippingLastName","shippingPhoneCountryCode","shippingPhone",
+                 "shippingCountry","shippingAddress","shippingApartment","shippingCity",
+                 "shippingState","shippingPostalCode","couponCode"].forEach((k) => localStorage.removeItem(k));
 
                 router.push("/orders");
             } catch (err: any) {

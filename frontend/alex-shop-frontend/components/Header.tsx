@@ -15,6 +15,7 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.clear();
+    document.cookie = "role=; path=/; max-age=0";
     setIsLoggedIn(false);
     router.push("/login");
   };
@@ -62,6 +63,15 @@ export default function Header() {
             </Link>
           </>
         )}
+        <Link
+          href="/account"
+          className="text-stone-600 hover:text-stone-900 transition"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </Link>
         <Link
           href="/cart"
           className="text-stone-600 hover:text-stone-900 transition"

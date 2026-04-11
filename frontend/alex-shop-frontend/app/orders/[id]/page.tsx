@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import api from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -39,7 +39,7 @@ export default function OrderDetailPage() {
             return;
         }
         const fetchOrder = async () => {
-            const res = await axios.get(`http://localhost:8080/api/orders/${id}`);
+            const res = await api.get(`/api/orders/${id}`);
             setOrder(res.data);
         };
         fetchOrder();

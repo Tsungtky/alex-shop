@@ -21,6 +21,7 @@ public class OrderService {
     private final ShippingRateService shippingRateService;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final CouponUsageRepository couponUsageRepository;
 
     // Admin can see all orders
     public List<Order> getAllOrders(){
@@ -76,7 +77,7 @@ public class OrderService {
     //including CartItem, OrderItem, Coupon, ShippingFee
     //Need to know who is placing order, coupon used, delivery country
     @Transactional(rollbackOn = Exception.class)
-    public Order createOrder(Integer userId, String couponCode, String shippingCountry, String shippingAddress){
+    public Order createOrder(Integer userId, String couponCode, String shippingCountry, String shippingFirstName, String shippingLastName, String shippingPhoneCountryCode, String shippingPhone, String shippingAddress, String shippingApartment, String shippingCity, String shippingState, String shippingPostalCode){
         List<CartItem> cartItemList = cartItemRepository.findByUserId(userId);
 
         // 檢查庫存
@@ -93,8 +94,15 @@ public class OrderService {
         }
         Integer shippingFee = shippingRateService.calculateShippingFee(shippingCountry, totalWeight);
         Integer discountAmount = 0;
+        Coupon usedCoupon = null;
         if(couponCode!=null && !couponCode.isEmpty()){
             Coupon coupon = couponService.getCouponByCode(couponCode);
+            if(coupon == null) throw new RuntimeException("Coupon not found");
+
+            if(couponUsageRepository.existsByCouponIdAndUserId(coupon.getId(), userId)){
+                throw new RuntimeException("You have already used this coupon.");
+            }
+
             if(coupon.getType().equals("shipping")){
                 shippingFee = 0;
             } else {
@@ -102,6 +110,7 @@ public class OrderService {
                 discountAmount = totalAmount - discountedAmount;
                 totalAmount = discountedAmount;
             }
+            usedCoupon = coupon;
         }
         totalAmount += shippingFee;
 
@@ -114,8 +123,16 @@ public class OrderService {
         order.setShippingFee(shippingFee);
         order.setDiscountAmount(discountAmount);
         order.setCouponCode(couponCode);
+        order.setShippingFirstName(shippingFirstName);
+        order.setShippingLastName(shippingLastName);
+        order.setShippingPhoneCountryCode(shippingPhoneCountryCode);
+        order.setShippingPhone(shippingPhone);
         order.setShippingCountry(shippingCountry);
         order.setShippingAddress(shippingAddress);
+        order.setShippingApartment(shippingApartment);
+        order.setShippingCity(shippingCity);
+        order.setShippingState(shippingState);
+        order.setShippingPostalCode(shippingPostalCode);
         order.setCreatedAt(LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
@@ -132,6 +149,14 @@ public class OrderService {
             Product product = item.getProduct();
             product.setStock(product.getStock() - item.getQuantity());
             productRepository.save(product);
+        }
+
+        // 記錄 coupon 使用紀錄
+        if(usedCoupon != null){
+            CouponUsage couponUsage = new CouponUsage();
+            couponUsage.setCoupon(usedCoupon);
+            couponUsage.setUser(user);
+            couponUsageRepository.save(couponUsage);
         }
 
         // Clear the cart after order is placed

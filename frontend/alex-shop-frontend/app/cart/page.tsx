@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import axios from "axios";
+import api from "@/lib/axios";
 
 type CartItem = {
   id: number;
@@ -25,8 +25,8 @@ export default function CartPage() {
         alert("ログインしてください。");
         return;
       }
-      const res = await axios.get(
-        `http://localhost:8080/api/cart/user/${userId}`
+      const res = await api.get(
+        `/api/cart/user/${userId}`
       );
       setCartItems(res.data);
     };
@@ -38,8 +38,8 @@ export default function CartPage() {
     newQuantity: number
   ) => {
     if (newQuantity < 1) return;
-    await axios.put(
-      `http://localhost:8080/api/cart/${cartItemId}?quantity=${newQuantity}`
+    await api.put(
+      `/api/cart/${cartItemId}?quantity=${newQuantity}`
     );
     setCartItems(
       cartItems.map((item) =>
@@ -49,7 +49,7 @@ export default function CartPage() {
   };
 
   const handleDelete = async (cartItemId: number) => {
-    await axios.delete(`http://localhost:8080/api/cart/${cartItemId}`);
+    await api.delete(`/api/cart/${cartItemId}`);
     setCartItems(cartItems.filter((item) => item.id !== cartItemId));
   };
 
@@ -58,6 +58,9 @@ export default function CartPage() {
       <h1 className="text-2xl font-light text-stone-800 tracking-widest mb-8">
         カート
       </h1>
+      {cartItems.length === 0 && (
+        <p className="text-stone-400 text-sm text-center py-16">カートに商品がありません</p>
+      )}
       <div className="flex flex-col gap-6">
         {cartItems.map((item) => (
           <div

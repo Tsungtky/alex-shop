@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 
 type Product = {
@@ -49,16 +50,11 @@ export default function AdminInventoryPage() {
     const router = useRouter();
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
-        if (role !== "admin") {
-            router.push("/");
-            return;
-        }
         fetchProducts();
     }, []);
 
     const fetchProducts = async () => {
-        const res = await axios.get("http://localhost:8080/api/products");
+        const res = await api.get("/api/products");
         setProducts(res.data);
     };
 
@@ -78,7 +74,7 @@ export default function AdminInventoryPage() {
         setUploading(true);
         try {
             const imageUrl = (await uploadImage(imageFile, form.imageUrl)) || "https://placehold.co/400x400?text=No+Image";
-            await axios.post("http://localhost:8080/api/products", {
+            await api.post("/api/products", {
                 ...form,
                 price: Number(form.price),
                 stock: Number(form.stock),
@@ -100,7 +96,7 @@ export default function AdminInventoryPage() {
         setUploading(true);
         try {
             const imageUrl = (await uploadImage(editImageFile, editingProduct.imageUrl)) || "https://placehold.co/400x400?text=No+Image";
-            await axios.put(`http://localhost:8080/api/products/${editingProduct.id}`, {
+            await api.put(`/api/products/${editingProduct.id}`, {
                 ...editingProduct,
                 imageUrl,
             });
@@ -115,7 +111,7 @@ export default function AdminInventoryPage() {
 
     const handleArchive = async (id: number) => {
         if (!confirm("この商品を下架しますか？")) return;
-        await axios.put(`http://localhost:8080/api/products/${id}/archive`);
+        await api.put(`/api/products/${id}/archive`);
         fetchProducts();
     };
 

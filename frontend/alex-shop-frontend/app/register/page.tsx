@@ -6,12 +6,13 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
@@ -25,8 +26,9 @@ export default function RegisterPage() {
       return;
     }
     try {
-      await axios.post("http://localhost:8080/api/users/register", {
-        username,
+      await api.post("/api/users/register", {
+        firstName,
+        lastName,
         email,
         password,
       });
@@ -54,11 +56,17 @@ export default function RegisterPage() {
         <form onSubmit={handleRegister} className="flex flex-col gap-3">
           <input
             type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="border-0 border-b border-stone-200 bg-transparent p-3 focus:outline-none
-  focus:border-stone-500 text-stone-700 placeholder-stone-300 text-sm transition"
+            placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="border-0 border-b border-stone-200 bg-transparent p-3 focus:outline-none focus:border-stone-500 text-stone-700 placeholder-stone-300 text-sm transition"
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="border-0 border-b border-stone-200 bg-transparent p-3 focus:outline-none focus:border-stone-500 text-stone-700 placeholder-stone-300 text-sm transition"
           />
           <input
             type="email"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import Toast from "@/components/Toast";
 
 export default function AddToCart({ productId, stock }: { productId: number; stock: number }) {
@@ -16,7 +16,7 @@ export default function AddToCart({ productId, stock }: { productId: number; sto
     }
 
     try {
-      await axios.post("http://localhost:8080/api/cart", {
+      await api.post("/api/cart", {
         user: { id: Number(userId) },
         product: { id: Number(productId) },
         quantity: quantity,
@@ -50,6 +50,9 @@ export default function AddToCart({ productId, stock }: { productId: number; sto
       </div>
       {stock === 0 && (
         <p className="text-xs text-red-400 tracking-widest">在庫切れ</p>
+      )}
+      {stock > 0 && stock <= 5 && (
+        <p className="text-xs text-amber-500 tracking-widest">残り{stock}点</p>
       )}
       <button
         onClick={handleAddToCart}
