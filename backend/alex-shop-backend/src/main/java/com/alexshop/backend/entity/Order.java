@@ -26,7 +26,15 @@ public class Order {
     private Integer shippingFee;
     private Integer discountAmount;
     private String couponCode;
+    private String shippingFirstName;
+    private String shippingLastName;
+    private String shippingPhoneCountryCode;
+    private String shippingPhone;
     private String shippingCountry;
-    private LocalDateTime createdAt;
     private String shippingAddress;
+    private String shippingApartment;
+    private String shippingCity;
+    private String shippingState;
+    private String shippingPostalCode;
+    private LocalDateTime createdAt;
 }

@@ -52,8 +52,16 @@ public class OrderController {
         Integer userId = user.getId();
         String couponCode = order.getCouponCode();
         String shippingCountry = order.getShippingCountry();
+        String shippingFirstName = order.getShippingFirstName();
+        String shippingLastName = order.getShippingLastName();
+        String shippingPhoneCountryCode = order.getShippingPhoneCountryCode();
+        String shippingPhone = order.getShippingPhone();
         String shippingAddress = order.getShippingAddress();
-        return orderService.createOrder(userId, couponCode, shippingCountry, shippingAddress);
+        String shippingApartment = order.getShippingApartment();
+        String shippingCity = order.getShippingCity();
+        String shippingState = order.getShippingState();
+        String shippingPostalCode = order.getShippingPostalCode();
+        return orderService.createOrder(userId, couponCode, shippingCountry, shippingFirstName, shippingLastName, shippingPhoneCountryCode, shippingPhone, shippingAddress, shippingApartment, shippingCity, shippingState, shippingPostalCode);
     }
     //Admin can update order status
     @PutMapping("/{id}")

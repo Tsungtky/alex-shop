@@ -2,6 +2,7 @@ package com.alexshop.backend.service;
 
 import com.alexshop.backend.entity.Coupon;
 import com.alexshop.backend.repository.CouponRepository;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,9 @@ public class CouponService {
 
         if(!coupon.getIsActive()){
             throw new RuntimeException("Coupon is not available.");
+        }
+        if(coupon.getExpiresAt() != null && coupon.getExpiresAt().isBefore(LocalDate.now())){
+            throw new RuntimeException("Coupon has expired.");
         }
         if(totalAmount < coupon.getMinOrder()){
             throw new RuntimeException("Minimum order amount not reached");
