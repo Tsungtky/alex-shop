@@ -7,6 +7,7 @@ type Product = {
   imageUrl: string;
   category: string;
   stock: number;
+  status: string;
 };
 
 export default async function ProductPage({
@@ -37,7 +38,13 @@ export default async function ProductPage({
           <p className="text-2xl text-stone-700">
             ¥{product.price.toLocaleString()}
           </p>
-          <AddToCart productId={product.id} stock={product.stock} />
+          {product.status === "archived" ? (
+            <p className="text-sm text-stone-400 tracking-widest border border-stone-200 rounded-full px-6 py-3 text-center">
+              販売終了
+            </p>
+          ) : (
+            <AddToCart productId={product.id} stock={product.stock} />
+          )}
         </div>
       </div>
     </div>

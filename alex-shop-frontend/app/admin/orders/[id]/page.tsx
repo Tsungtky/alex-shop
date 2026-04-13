@@ -25,6 +25,7 @@ type Order = {
     shippingAddress: string;
     createdAt: string;
     orderItems: OrderItem[];
+    trackingNumber: string | null;
 };
 
 const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered"];
@@ -32,6 +33,7 @@ const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered"];
 export default function AdminOrderDetailPage() {
     const [order, setOrder] = useState<Order | null>(null);
     const [selectedStatus, setSelectedStatus] = useState("");
+    const [trackingInput, setTrackingInput] = useState("");
     const { id } = useParams();
     const router = useRouter();
 
@@ -41,6 +43,7 @@ export default function AdminOrderDetailPage() {
                 const res = await api.get(`/api/orders/${id}`);
                 setOrder(res.data);
                 setSelectedStatus(res.data.status);
+                setTrackingInput(res.data.trackingNumber || "");
             } catch (err) {
                 console.error(err);
             }
@@ -53,6 +56,16 @@ export default function AdminOrderDetailPage() {
             await api.put(`/api/orders/${id}?status=${selectedStatus}`);
             setOrder((prev) => prev ? { ...prev, status: selectedStatus } : prev);
             alert("ステータスを更新しました");
+        } catch (err) {
+            alert("更新に失敗しました");
+        }
+    };
+
+    const handleUpdateTracking = async () => {
+        try {
+            await api.put(`/api/orders/${id}/tracking?trackingNumber=${encodeURIComponent(trackingInput)}`);
+            setOrder((prev) => prev ? { ...prev, trackingNumber: trackingInput } : prev);
+            alert("配送追跡番号を更新しました");
         } catch (err) {
             alert("更新に失敗しました");
         }
@@ -81,7 +94,7 @@ export default function AdminOrderDetailPage() {
                 {/* 注文情報 */}
                 <div className="border border-stone-200 rounded-xl p-6 flex flex-col gap-4">
                     <div className="flex justify-between items-center border-b border-stone-100 pb-4">
-                        <p className="text-xs tracking-widest text-stone-500">顧客</p>
+                        <p className="text-xs tracking-widest text-stone-500">お客様</p>
                         <p className="text-sm text-stone-700">{order.user?.firstName} {order.user?.lastName} / {order.user?.email}</p>
                     </div>
                     <div className="flex justify-between items-center border-b border-stone-100 pb-4">
@@ -123,6 +136,26 @@ export default function AdminOrderDetailPage() {
                                 <p className="text-stone-700 text-sm">¥{(item.unitPrice * item.quantity).toLocaleString()}</p>
                             </div>
                         ))}
+                    </div>
+                </div>
+
+                {/* トラッキング番号 */}
+                <div className="flex flex-col gap-4">
+                    <h2 className="text-xs tracking-widest text-stone-500">配送追跡番号</h2>
+                    <div className="flex items-center gap-4">
+                        <input
+                            type="text"
+                            value={trackingInput}
+                            onChange={(e) => setTrackingInput(e.target.value)}
+                            placeholder="例: 123456789"
+                            className="border border-stone-200 rounded-lg px-4 py-2 text-sm text-stone-700 focus:outline-none focus:border-stone-400 flex-1"
+                        />
+                        <button
+                            onClick={handleUpdateTracking}
+                            className="bg-stone-800 hover:bg-stone-900 text-white px-6 py-2 rounded-full text-sm tracking-widest transition"
+                        >
+                            保存
+                        </button>
                     </div>
                 </div>
 

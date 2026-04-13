@@ -13,8 +13,13 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    //Get all products
+    //Get all active products (public)
     public List<Product> getAllProducts(){
+        return productRepository.findByStatus("active");
+    }
+
+    //Get all products including archived (admin)
+    public List<Product> getAllProductsForAdmin(){
         return productRepository.findAll();
     }
 
@@ -34,6 +39,13 @@ public class ProductService {
     public Product archiveProduct(Integer productId){
         Product product = productRepository.findById(productId).orElseThrow();
         product.setStatus("archived");
+        return productRepository.save(product);
+    }
+
+    //Unarchive product
+    public Product unarchiveProduct(Integer productId){
+        Product product = productRepository.findById(productId).orElseThrow();
+        product.setStatus("active");
         return productRepository.save(product);
     }
 

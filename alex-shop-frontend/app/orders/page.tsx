@@ -9,6 +9,7 @@ type Order = {
     status: string;
     totalAmount: number;
     createdAt: string;
+    trackingNumber: string | null;
 };
 
 export default function OrdersPage() {
@@ -37,6 +38,9 @@ export default function OrdersPage() {
                             <p className="text-xs text-stone-400 tracking-widest">注文番号 #{order.id}</p>
                             <p className="text-stone-800 font-light">¥{order.totalAmount.toLocaleString()}</p>
                             <p className="text-xs text-stone-400">{order.createdAt.slice(0, 10)}</p>
+                            <p className="text-xs text-stone-500 font-mono mt-1">
+                                配送追跡番号: {order.trackingNumber ?? "—"}
+                            </p>
                         </div>
                         <span className="text-xs tracking-widest px-3 py-1 rounded-full border border-stone-300 text-stone-600">
                             {order.status}

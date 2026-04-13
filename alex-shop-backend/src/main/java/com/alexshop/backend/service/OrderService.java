@@ -46,6 +46,13 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    // Admin updates tracking number
+    public Order updateTrackingNumber(Integer orderId, String trackingNumber) {
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        order.setTrackingNumber(trackingNumber);
+        return orderRepository.save(order);
+    }
+
     // Cancel order
     @Transactional
     public Order cancelOrder(Integer orderId){

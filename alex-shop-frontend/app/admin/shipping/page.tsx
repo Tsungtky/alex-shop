@@ -53,7 +53,7 @@ export default function AdminShippingPage() {
     return (
         <div className="max-w-4xl mx-auto px-8 py-12">
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-light text-stone-800 tracking-widest">運費管理</h1>
+                <h1 className="text-2xl font-light text-stone-800 tracking-widest">送料管理</h1>
                 <button
                     onClick={() => setShowForm(!showForm)}
                     className="bg-stone-800 hover:bg-stone-900 text-white px-6 py-2 rounded-full text-sm tracking-widest transition"

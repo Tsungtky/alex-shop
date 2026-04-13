@@ -37,4 +37,5 @@ public class Order {
     private String shippingState;
     private String shippingPostalCode;
     private LocalDateTime createdAt;
+    private String trackingNumber;
 }

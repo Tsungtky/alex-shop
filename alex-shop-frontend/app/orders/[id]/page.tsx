@@ -26,6 +26,7 @@ type Order = {
     shippingAddress: string;
     createdAt: string;
     orderItems: OrderItem[];
+    trackingNumber: string | null;
 };
 
 export default function OrderDetailPage() {
@@ -84,6 +85,10 @@ export default function OrderDetailPage() {
                                 <p className="text-sm text-green-600">-¥{order.discountAmount.toLocaleString()}</p>
                             </div>
                         )}
+                        <div className="flex justify-between items-center border-b border-stone-100 pb-4">
+                            <p className="text-xs tracking-widest text-stone-500">配送追跡番号</p>
+                            <p className="text-sm text-stone-700 font-mono">{order.trackingNumber ?? "—"}</p>
+                        </div>
                         <div className="flex justify-between items-center">
                             <p className="text-xs tracking-widest text-stone-500">合計</p>
                             <p className="text-xl font-light text-stone-800">¥{order.totalAmount.toLocaleString()}</p>

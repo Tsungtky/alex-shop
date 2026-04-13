@@ -54,7 +54,7 @@ export default function AdminInventoryPage() {
     }, []);
 
     const fetchProducts = async () => {
-        const res = await api.get("/api/products");
+        const res = await api.get("/api/products/admin");
         setProducts(res.data);
     };
 
@@ -112,6 +112,12 @@ export default function AdminInventoryPage() {
     const handleArchive = async (id: number) => {
         if (!confirm("この商品を下架しますか？")) return;
         await api.put(`/api/products/${id}/archive`);
+        fetchProducts();
+    };
+
+    const handleUnarchive = async (id: number) => {
+        if (!confirm("この商品を再販売しますか？")) return;
+        await api.put(`/api/products/${id}/unarchive`);
         fetchProducts();
     };
 
@@ -192,8 +198,8 @@ export default function AdminInventoryPage() {
                         </div>
                         <span className={`text-xs px-3 py-1 rounded-full border ${
                             product.status === "archived"
-                                ? "border-stone-200 text-stone-400"
-                                : "border-green-200 text-green-600"
+                                ? "border-stone-200 text-stone-400 bg-stone-50"
+                                : "border-green-300 text-green-700 bg-green-100"
                         }`}>
                             {product.status === "archived" ? "下架済" : "販売中"}
                         </span>
@@ -203,7 +209,14 @@ export default function AdminInventoryPage() {
                         >
                             編集
                         </button>
-                        {product.status !== "archived" && (
+                        {product.status === "archived" ? (
+                            <button
+                                onClick={() => handleUnarchive(product.id)}
+                                className="text-xs text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-lg transition"
+                            >
+                                再販売
+                            </button>
+                        ) : (
                             <button
                                 onClick={() => handleArchive(product.id)}
                                 className="text-xs text-red-400 hover:text-red-600 border border-red-200 hover:border-red-400 px-3 py-1 rounded-lg transition"

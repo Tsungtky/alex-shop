@@ -7,7 +7,7 @@ const navItems = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/orders", label: "注文管理" },
   { href: "/admin/inventory", label: "商品管理" },
-  { href: "/admin/shipping", label: "運費管理" },
+  { href: "/admin/shipping", label: "送料管理" },
   { href: "/admin/coupons", label: "クーポン管理" },
 ];
 

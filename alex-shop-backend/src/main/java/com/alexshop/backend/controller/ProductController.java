@@ -18,6 +18,11 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @GetMapping("/admin")
+    public List<Product> getAllProductsForAdmin(){
+        return productService.getAllProductsForAdmin();
+    }
+
     @GetMapping("/{id}")
     public Product getProduct(@PathVariable Integer id){
         return productService.getProductByID(id);
@@ -36,6 +41,11 @@ public class ProductController {
     @PutMapping("/{id}/archive")
     public Product archiveProduct(@PathVariable Integer id){
         return productService.archiveProduct(id);
+    }
+
+    @PutMapping("/{id}/unarchive")
+    public Product unarchiveProduct(@PathVariable Integer id){
+        return productService.unarchiveProduct(id);
     }
 
     @DeleteMapping("/{id}")

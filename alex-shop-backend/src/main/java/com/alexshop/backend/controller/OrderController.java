@@ -69,6 +69,12 @@ public class OrderController {
         return orderService.updateOrderStatus(id, status);
     }
 
+    //Admin can update tracking number
+    @PutMapping("/{id}/tracking")
+    public Order updateTrackingNumber(@PathVariable Integer id, @RequestParam String trackingNumber) {
+        return orderService.updateTrackingNumber(id, trackingNumber);
+    }
+
     //Admin/User can cancel order(not delete)
     @PutMapping("/{id}/cancel")
     public Order cancelOrder(@PathVariable Integer id){
