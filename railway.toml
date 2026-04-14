@@ -2,5 +2,8 @@
 builder = "nixpacks"
 buildCommand = "cd alex-shop-backend && ./mvnw clean package -DskipTests"
 
+[build.nixpacksPlan.phases.setup]
+nixPkgs = ["jdk21"]
+
 [deploy]
 startCommand = "cd alex-shop-backend && java -jar target/*.jar"
