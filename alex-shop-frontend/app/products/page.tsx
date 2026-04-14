@@ -19,7 +19,7 @@ type Product = {
   stock: number;
 };
 
-const CATEGORIES = (tr: typeof t.ja) => [
+const CATEGORIES = (tr: typeof t.ja | typeof t.en | typeof t.zh) => [
   { value: "", label: tr.all },
   { value: "kitchen", label: tr.kitchen },
   { value: "aroma", label: tr.aroma },

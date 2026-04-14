@@ -85,7 +85,6 @@ export const t = {
 
         // Profile
         basicInfo: "基本情報",
-        address: "住所",
         save: "保存する",
         changePassword: "パスワード変更",
         currentPassword: "現在のパスワード",
@@ -233,7 +232,6 @@ export const t = {
         ordersReturnsSub: "Order history",
 
         basicInfo: "Basic Info",
-        address: "Address",
         save: "Save",
         changePassword: "Change Password",
         currentPassword: "Current Password",
@@ -379,7 +377,6 @@ export const t = {
         ordersReturnsSub: "訂單記錄",
 
         basicInfo: "基本資料",
-        address: "地址",
         save: "儲存",
         changePassword: "修改密碼",
         currentPassword: "目前密碼",
