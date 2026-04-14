@@ -25,7 +25,7 @@ export default function LoginPage() {
       localStorage.setItem("lastName", res.data.lastName);
       localStorage.setItem("role", res.data.role);
       document.cookie = `role=${res.data.role}; path=/`;
-      if (res.data.role === "admin") {
+      if (res.data.role === "ADMIN") {
         router.push("/admin");
       } else {
         router.push("/");
