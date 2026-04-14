@@ -54,7 +54,7 @@ function ProductsContent() {
     .filter((p) => category === "" || p.category === category);
 
   return (
-    <div className="max-w-6xl mx-auto px-8 py-8">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
       <div className="flex gap-3 mb-8">
         <input
           type="text"
@@ -75,13 +75,13 @@ function ProductsContent() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
         </div>
       ) : filtered.length === 0 ? (
         <p className="text-center text-stone-400 text-sm py-16">{tr.noProducts}</p>
       ) : (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {filtered.map((product) => (
             <Link href={`/products/${product.id}`} key={product.id}>
               <div className="border border-stone-200 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer">
