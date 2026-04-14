@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 import Toast from "@/components/Toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/locales";
 
 type User = {
   id: number;
@@ -30,12 +32,12 @@ const PHONE_CODES = [
   { code: "+66", label: "+66 (TH)" },
 ];
 
-const COUNTRIES = [
-  { code: "Taiwan", label: "台湾" },
-  { code: "Japan", label: "日本" },
-  { code: "Korea", label: "韓国" },
-  { code: "USA", label: "アメリカ" },
-  { code: "Thailand", label: "タイ" },
+const getCountries = (tr: any) => [
+  { code: "Taiwan", label: tr.taiwan },
+  { code: "Japan", label: tr.japan },
+  { code: "Korea", label: tr.korea },
+  { code: "USA", label: tr.usa },
+  { code: "Thailand", label: tr.thailand },
 ];
 
 const US_STATES = [
@@ -60,6 +62,9 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [pwForm, setPwForm] = useState({ oldPassword: "", newPassword: "", confirm: "" });
+  const { lang } = useLanguage();
+  const tr = t[lang];
+  const COUNTRIES = getCountries(tr);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -75,9 +80,9 @@ export default function ProfilePage() {
   const handleSave = async () => {
     try {
       await api.put("/api/users", user);
-      setToast({ message: "保存しました", type: "success" });
+      setToast({ message: tr.saveSuccess, type: "success" });
     } catch {
-      setToast({ message: "保存に失敗しました", type: "error" });
+      setToast({ message: tr.saveFailed, type: "error" });
     }
   };
 
@@ -87,11 +92,11 @@ export default function ProfilePage() {
 
   const handleChangePassword = async () => {
     if (pwForm.newPassword !== pwForm.confirm) {
-      setToast({ message: "新しいパスワードが一致しません", type: "error" });
+      setToast({ message: tr.passwordMismatch, type: "error" });
       return;
     }
     if (pwForm.newPassword.length < 6) {
-      setToast({ message: "パスワードは6文字以上にしてください", type: "error" });
+      setToast({ message: tr.passwordTooShort, type: "error" });
       return;
     }
     try {
@@ -102,7 +107,7 @@ export default function ProfilePage() {
       localStorage.clear();
       router.push("/login");
     } catch (err: any) {
-      setToast({ message: err.response?.data?.error || "パスワード変更に失敗しました", type: "error" });
+      setToast({ message: err.response?.data?.error || tr.passwordChangeFailed, type: "error" });
     }
   };
 
@@ -113,13 +118,13 @@ export default function ProfilePage() {
   return (
     <div className="max-w-2xl mx-auto px-8 py-12">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <h1 className="text-2xl font-light text-stone-800 tracking-widest mb-10">プロフィール</h1>
+      <h1 className="text-2xl font-light text-stone-800 tracking-widest mb-10">{tr.profile}</h1>
 
       <div className="flex flex-col gap-8">
 
         {/* 基本情報 */}
         <section className="flex flex-col gap-6">
-          <p className="text-xs tracking-widest text-stone-400 uppercase">基本情報</p>
+          <p className="text-xs tracking-widest text-stone-400 uppercase">{tr.basicInfo}</p>
           <div className="grid grid-cols-2 gap-6">
             <div>
               <p className={labelClass}>First Name</p>
@@ -173,11 +178,11 @@ export default function ProfilePage() {
 
         {/* 住所 */}
         <section className="flex flex-col gap-6">
-          <p className="text-xs tracking-widest text-stone-400 uppercase">住所</p>
+          <p className="text-xs tracking-widest text-stone-400 uppercase">{tr.address}</p>
           <div>
             <p className={labelClass}>国</p>
             <select className={selectClass} value={user.country ?? ""} onChange={(e) => set("country", e.target.value)}>
-              <option value="">選択してください</option>
+              <option value="">{tr.selectCountry}</option>
               {COUNTRIES.map((c) => (
                 <option key={c.code} value={c.code}>{c.label}</option>
               ))}
@@ -218,14 +223,14 @@ export default function ProfilePage() {
           onClick={handleSave}
           className="bg-stone-800 hover:bg-stone-900 text-white py-3 px-10 rounded-full text-sm tracking-widest transition self-end"
         >
-          保存する
+          {tr.save}
         </button>
 
         {/* パスワード変更 */}
         <section className="flex flex-col gap-6 border-t border-stone-100 pt-8">
-          <p className="text-xs tracking-widest text-stone-400 uppercase">パスワード変更</p>
+          <p className="text-xs tracking-widest text-stone-400 uppercase">{tr.changePassword}</p>
           <div>
-            <p className={labelClass}>現在のパスワード</p>
+            <p className={labelClass}>{tr.currentPassword}</p>
             <input
               type="password"
               className={inputClass}
@@ -234,7 +239,7 @@ export default function ProfilePage() {
             />
           </div>
           <div>
-            <p className={labelClass}>新しいパスワード</p>
+            <p className={labelClass}>{tr.newPassword}</p>
             <input
               type="password"
               className={inputClass}
@@ -243,7 +248,7 @@ export default function ProfilePage() {
             />
           </div>
           <div>
-            <p className={labelClass}>新しいパスワード（確認）</p>
+            <p className={labelClass}>{tr.confirmPassword}</p>
             <input
               type="password"
               className={inputClass}
@@ -255,7 +260,7 @@ export default function ProfilePage() {
             onClick={handleChangePassword}
             className="bg-stone-800 hover:bg-stone-900 text-white py-3 px-10 rounded-full text-sm tracking-widest transition self-end"
           >
-            パスワードを変更する
+            {tr.changePasswordBtn}
           </button>
         </section>
       </div>

@@ -1,12 +1,16 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/locales";
 
 export default function Footer() {
   const pathname = usePathname();
+  const { lang } = useLanguage();
+  const tr = t[lang];
 
-  const hideHeader = pathname === "/login" || pathname === "/register" || pathname.startsWith("/admin");
-  if (hideHeader) return null;
+  const hideFooter = pathname === "/login" || pathname === "/register" || pathname.startsWith("/admin");
+  if (hideFooter) return null;
 
   return (
     <footer className="bg-white border-t border-stone-200 px-8 py-12 mt-auto">
@@ -16,67 +20,45 @@ export default function Footer() {
             ALEXSHOP
           </h3>
           <p className="text-xs text-stone-400 leading-relaxed">
-            上質なライフスタイルをあなたに。
-            <br />
-            こだわりのセレクトショップ。
+            {tr.footerTagline}
           </p>
         </div>
         <div>
           <h4 className="text-xs tracking-widest text-stone-500 mb-4">MENU</h4>
           <ul className="flex flex-col gap-2">
             <li>
-              <a
-                href="/"
-                className="text-xs text-stone-400 hover:text-stone-700 transition"
-              >
-                ホーム
+              <a href="/" className="text-xs text-stone-400 hover:text-stone-700 transition">
+                {tr.footerHome}
               </a>
             </li>
             <li>
-              <a
-                href="/products"
-                className="text-xs text-stone-400 hover:text-stone-700 transition"
-              >
-                商品一覧
+              <a href="/products" className="text-xs text-stone-400 hover:text-stone-700 transition">
+                {tr.products}
               </a>
             </li>
             <li>
-              <a
-                href="/cart"
-                className="text-xs text-stone-400 hover:text-stone-700 transition"
-              >
-                カート
+              <a href="/cart" className="text-xs text-stone-400 hover:text-stone-700 transition">
+                {tr.cart}
               </a>
             </li>
           </ul>
         </div>
         <div>
-          <h4 className="text-xs tracking-widest text-stone-500 mb-4">
-            ACCOUNT
-          </h4>
+          <h4 className="text-xs tracking-widest text-stone-500 mb-4">ACCOUNT</h4>
           <ul className="flex flex-col gap-2">
             <li>
-              <a
-                href="/login"
-                className="text-xs text-stone-400 hover:text-stone-700 transition"
-              >
-                ログイン
+              <a href="/login" className="text-xs text-stone-400 hover:text-stone-700 transition">
+                {tr.login}
               </a>
             </li>
             <li>
-              <a
-                href="/register"
-                className="text-xs text-stone-400 hover:text-stone-700 transition"
-              >
-                登録
+              <a href="/register" className="text-xs text-stone-400 hover:text-stone-700 transition">
+                {tr.register}
               </a>
             </li>
             <li>
-              <a
-                href="/orders"
-                className="text-xs text-stone-400 hover:text-stone-700 transition"
-              >
-                注文履歴
+              <a href="/orders" className="text-xs text-stone-400 hover:text-stone-700 transition">
+                {tr.orderHistory}
               </a>
             </li>
           </ul>

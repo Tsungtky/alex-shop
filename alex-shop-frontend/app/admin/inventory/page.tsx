@@ -53,7 +53,7 @@ export default function AdminInventoryPage() {
     const CATEGORIES = [
         { value: "", label: "すべて" },
         { value: "kitchen", label: "キッチン" },
-        { value: "aroma", label: "居家香氛" },
+        { value: "aroma", label: "アロマ" },
         { value: "storage", label: "収納" },
     ];
 
