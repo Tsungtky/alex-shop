@@ -25,7 +25,7 @@ public class OrderService {
 
     // Admin can see all orders
     public List<Order> getAllOrders(){
-        return orderRepository.findAll();
+        return orderRepository.findAllByOrderByCreatedAtDesc();
     }
 
     //User can check their orders
@@ -50,6 +50,16 @@ public class OrderService {
     public Order updateTrackingNumber(Integer orderId, String trackingNumber) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setTrackingNumber(trackingNumber);
+        return orderRepository.save(order);
+    }
+
+    // Customer requests cancellation
+    public Order requestCancellation(Integer orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        if (order.getStatus().equals("shipped") || order.getStatus().equals("delivered") || order.getStatus().equals("cancelled")) {
+            throw new RuntimeException("この注文はキャンセルリクエストできません");
+        }
+        order.setStatus("cancel_requested");
         return orderRepository.save(order);
     }
 

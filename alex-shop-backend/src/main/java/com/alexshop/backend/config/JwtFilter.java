@@ -1,5 +1,6 @@
 package com.alexshop.backend.config;
 
+import com.alexshop.backend.service.TokenBlacklistService;
 import com.alexshop.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -20,6 +21,7 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -39,6 +41,10 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
+                if (tokenBlacklistService.isBlacklisted(token)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
                 Claims claims = jwtUtil.validateToken(token);
                 request.setAttribute("userId", claims.get("userId", Integer.class));
                 request.setAttribute("role", claims.get("role", String.class));

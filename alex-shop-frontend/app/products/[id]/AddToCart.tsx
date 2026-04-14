@@ -22,6 +22,7 @@ export default function AddToCart({ productId, stock }: { productId: number; sto
         quantity: quantity,
       });
       setToast({ message: "カートに追加しました！", type: "success" });
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err: any) {
       setToast({ message: err.response?.data?.error || "エラーが発生しました", type: "error" });
     }

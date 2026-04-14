@@ -32,4 +32,11 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    public long getRemainingSeconds(String token) {
+        Claims claims = validateToken(token);
+        long expMillis = claims.getExpiration().getTime();
+        long remaining = (expMillis - System.currentTimeMillis()) / 1000;
+        return Math.max(remaining, 0);
+    }
 }

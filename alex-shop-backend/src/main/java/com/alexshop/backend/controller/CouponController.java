@@ -27,4 +27,19 @@ public class CouponController {
     public Coupon getCouponByCode(@PathVariable String code){
         return couponService.getCouponByCode(code);
     }
+
+    @GetMapping("/validate")
+    public Coupon validateCoupon(@RequestParam String code, @RequestParam Integer userId){
+        return couponService.validateCoupon(code, userId);
+    }
+
+    @PutMapping("/{id}")
+    public Coupon updateCoupon(@PathVariable Integer id, @RequestBody Coupon coupon){
+        return couponService.updateCoupon(id, coupon);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteCoupon(@PathVariable Integer id){
+        couponService.deleteCoupon(id);
+    }
 }

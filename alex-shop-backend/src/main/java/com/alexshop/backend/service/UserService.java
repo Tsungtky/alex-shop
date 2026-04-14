@@ -16,6 +16,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public User getUserById(Integer userId){
         return userRepository.findById(userId).orElseThrow();
@@ -33,6 +34,17 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
+    }
+
+    public void changePassword(Integer userId, String oldPassword, String newPassword, String token) {
+        User user = userRepository.findById(userId).orElseThrow();
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new RuntimeException("現在のパスワードが正しくありません");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        long remaining = jwtUtil.getRemainingSeconds(token);
+        tokenBlacklistService.blacklist(token, remaining);
     }
 
     public LoginResponse login(LoginRequest request) {

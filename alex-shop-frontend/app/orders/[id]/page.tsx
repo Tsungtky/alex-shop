@@ -29,9 +29,28 @@ type Order = {
     trackingNumber: string | null;
 };
 
+const STATUS_LABEL: Record<string, { label: string; color: string }> = {
+    pending:          { label: "pending",          color: "border-yellow-300 text-yellow-600" },
+    processing:       { label: "processing",       color: "border-blue-300 text-blue-600" },
+    shipped:          { label: "shipped",          color: "border-indigo-300 text-indigo-600" },
+    delivered:        { label: "delivered",        color: "border-green-300 text-green-600" },
+    cancel_requested: { label: "cancel requested", color: "border-amber-400 text-amber-600" },
+    cancelled:        { label: "cancelled",        color: "border-red-300 text-red-400" },
+};
+
 export default function OrderDetailPage() {
     const [order, setOrder] = useState<Order | null>(null);
     const { id } = useParams();
+
+    const handleRequestCancel = async () => {
+        if (!confirm("キャンセルをリクエストしますか？")) return;
+        try {
+            const res = await api.put(`/api/orders/${id}/request-cancel`);
+            setOrder(res.data);
+        } catch (err: any) {
+            alert(err.response?.data?.error || "エラーが発生しました");
+        }
+    };
 
     useEffect(() => {
         const userId = localStorage.getItem("userId");
@@ -59,9 +78,14 @@ export default function OrderDetailPage() {
                     <div className="border border-stone-200 rounded-xl p-6 flex flex-col gap-4">
                         <div className="flex justify-between items-center border-b border-stone-100 pb-4">
                             <p className="text-xs tracking-widest text-stone-500">状態</p>
-                            <span className="text-xs tracking-widest px-3 py-1 rounded-full border border-stone-300 text-stone-600">
-                                {order.status}
-                            </span>
+                            {(() => {
+                                const s = STATUS_LABEL[order.status] ?? { label: order.status, color: "border-stone-300 text-stone-600" };
+                                return (
+                                    <span className={`text-xs tracking-widest px-3 py-1 rounded-full border ${s.color}`}>
+                                        {s.label}
+                                    </span>
+                                );
+                            })()}
                         </div>
                         <div className="flex justify-between items-center border-b border-stone-100 pb-4">
                             <p className="text-xs tracking-widest text-stone-500">注文日</p>
@@ -94,6 +118,21 @@ export default function OrderDetailPage() {
                             <p className="text-xl font-light text-stone-800">¥{order.totalAmount.toLocaleString()}</p>
                         </div>
                     </div>
+
+                    {/* キャンセルリクエスト */}
+                    {["pending", "processing"].includes(order.status) && (
+                        <button
+                            onClick={handleRequestCancel}
+                            className="w-full border border-red-200 text-red-400 hover:bg-red-50 hover:text-red-600 py-3 rounded-full text-sm tracking-widest transition"
+                        >
+                            キャンセルをリクエストする
+                        </button>
+                    )}
+                    {order.status === "cancel_requested" && (
+                        <p className="text-center text-sm text-amber-500 tracking-widest py-2">
+                            キャンセルリクエスト中
+                        </p>
+                    )}
 
                     {/* 注文商品明細 */}
                     <div>

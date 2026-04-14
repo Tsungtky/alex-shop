@@ -47,7 +47,15 @@ export default function AdminInventoryPage() {
     const [uploading, setUploading] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [editImageFile, setEditImageFile] = useState<File | null>(null);
+    const [categoryFilter, setCategoryFilter] = useState("");
     const router = useRouter();
+
+    const CATEGORIES = [
+        { value: "", label: "すべて" },
+        { value: "kitchen", label: "キッチン" },
+        { value: "aroma", label: "居家香氛" },
+        { value: "storage", label: "収納" },
+    ];
 
     useEffect(() => {
         fetchProducts();
@@ -121,6 +129,12 @@ export default function AdminInventoryPage() {
         fetchProducts();
     };
 
+    const handleDelete = async (id: number) => {
+        if (!confirm("この商品を完全に削除しますか？この操作は取り消せません。")) return;
+        await api.delete(`/api/products/${id}`);
+        fetchProducts();
+    };
+
     const closeModal = () => {
         setEditingProduct(null);
         setEditImageFile(null);
@@ -176,9 +190,28 @@ export default function AdminInventoryPage() {
                 </div>
             )}
 
+            {/* カテゴリーフィルター */}
+            <div className="flex gap-0 mb-6 border-b border-stone-200">
+                {CATEGORIES.map((cat) => (
+                    <button
+                        key={cat.value}
+                        onClick={() => setCategoryFilter(cat.value)}
+                        className={`px-5 py-2 text-sm tracking-widest transition border-b-2 -mb-px ${
+                            categoryFilter === cat.value
+                                ? "border-stone-800 text-stone-800"
+                                : "border-transparent text-stone-400 hover:text-stone-600"
+                        }`}
+                    >
+                        {cat.label}
+                    </button>
+                ))}
+            </div>
+
             {/* 商品列表 */}
             <div className="flex flex-col gap-4">
-                {products.map((product) => (
+                {products
+                    .filter((p) => categoryFilter === "" || p.category === categoryFilter)
+                    .map((product) => (
                     <div
                         key={product.id}
                         className={`border rounded-xl px-6 py-4 flex items-center gap-4 ${
@@ -210,12 +243,20 @@ export default function AdminInventoryPage() {
                             編集
                         </button>
                         {product.status === "archived" ? (
-                            <button
-                                onClick={() => handleUnarchive(product.id)}
-                                className="text-xs text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-lg transition"
-                            >
-                                再販売
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => handleUnarchive(product.id)}
+                                    className="text-xs text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-lg transition"
+                                >
+                                    再販売
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(product.id)}
+                                    className="text-xs text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg transition"
+                                >
+                                    削除
+                                </button>
+                            </>
                         ) : (
                             <button
                                 onClick={() => handleArchive(product.id)}

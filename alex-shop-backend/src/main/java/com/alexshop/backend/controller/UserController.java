@@ -7,6 +7,8 @@ import com.alexshop.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -31,5 +33,15 @@ public class UserController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         return userService.login(request);
+    }
+
+    @PutMapping("/{id}/change-password")
+    public void changePassword(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> body,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        String token = authHeader.substring(7);
+        userService.changePassword(id, body.get("oldPassword"), body.get("newPassword"), token);
     }
 }

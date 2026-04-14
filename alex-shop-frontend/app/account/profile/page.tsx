@@ -59,6 +59,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [pwForm, setPwForm] = useState({ oldPassword: "", newPassword: "", confirm: "" });
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -82,6 +83,27 @@ export default function ProfilePage() {
 
   const set = (field: keyof User, value: string) => {
     setUser((prev) => prev ? { ...prev, [field]: value } : prev);
+  };
+
+  const handleChangePassword = async () => {
+    if (pwForm.newPassword !== pwForm.confirm) {
+      setToast({ message: "新しいパスワードが一致しません", type: "error" });
+      return;
+    }
+    if (pwForm.newPassword.length < 6) {
+      setToast({ message: "パスワードは6文字以上にしてください", type: "error" });
+      return;
+    }
+    try {
+      await api.put(`/api/users/${user!.id}/change-password`, {
+        oldPassword: pwForm.oldPassword,
+        newPassword: pwForm.newPassword,
+      });
+      localStorage.clear();
+      router.push("/login");
+    } catch (err: any) {
+      setToast({ message: err.response?.data?.error || "パスワード変更に失敗しました", type: "error" });
+    }
   };
 
   if (!user) return null;
@@ -198,6 +220,44 @@ export default function ProfilePage() {
         >
           保存する
         </button>
+
+        {/* パスワード変更 */}
+        <section className="flex flex-col gap-6 border-t border-stone-100 pt-8">
+          <p className="text-xs tracking-widest text-stone-400 uppercase">パスワード変更</p>
+          <div>
+            <p className={labelClass}>現在のパスワード</p>
+            <input
+              type="password"
+              className={inputClass}
+              value={pwForm.oldPassword}
+              onChange={(e) => setPwForm({ ...pwForm, oldPassword: e.target.value })}
+            />
+          </div>
+          <div>
+            <p className={labelClass}>新しいパスワード</p>
+            <input
+              type="password"
+              className={inputClass}
+              value={pwForm.newPassword}
+              onChange={(e) => setPwForm({ ...pwForm, newPassword: e.target.value })}
+            />
+          </div>
+          <div>
+            <p className={labelClass}>新しいパスワード（確認）</p>
+            <input
+              type="password"
+              className={inputClass}
+              value={pwForm.confirm}
+              onChange={(e) => setPwForm({ ...pwForm, confirm: e.target.value })}
+            />
+          </div>
+          <button
+            onClick={handleChangePassword}
+            className="bg-stone-800 hover:bg-stone-900 text-white py-3 px-10 rounded-full text-sm tracking-widest transition self-end"
+          >
+            パスワードを変更する
+          </button>
+        </section>
       </div>
     </div>
   );

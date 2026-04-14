@@ -120,14 +120,18 @@ export default function CheckoutPage() {
     };
 
     const handleApplyCoupon = async () => {
+        const userId = localStorage.getItem("userId");
         try {
-            const res = await api.get(`/api/coupons/${couponCode}`);
+            const res = await api.get(`/api/coupons/validate?code=${encodeURIComponent(couponCode)}&userId=${userId}`);
             const coupon: Coupon = res.data;
-            if (!coupon.isActive) { alert("このクーポンは無効です"); return; }
-            if (itemTotal < coupon.minOrder) { alert(`最低注文金額は¥${coupon.minOrder.toLocaleString()}です`); return; }
+            if (itemTotal < coupon.minOrder) {
+                setToast({ message: `最低注文金額は¥${coupon.minOrder.toLocaleString()}です`, type: "error" });
+                return;
+            }
             setAppliedCoupon(coupon);
-        } catch {
-            alert("クーポンが見つかりません");
+            setToast({ message: "クーポンを適用しました", type: "success" });
+        } catch (err: any) {
+            setToast({ message: err.response?.data?.error || "クーポンが見つかりません", type: "error" });
         }
     };
 
@@ -168,7 +172,7 @@ export default function CheckoutPage() {
     if (appliedCoupon) {
         if (appliedCoupon.type === "percent") discountAmount = Math.floor(totalAmount * appliedCoupon.value / 100);
         else if (appliedCoupon.type === "fixed") discountAmount = appliedCoupon.value;
-        else if (appliedCoupon.type === "free_shipping") discountAmount = shippingFee ?? 0;
+        else if (appliedCoupon.type === "shipping") discountAmount = shippingFee ?? 0;
     }
     const finalAmount = totalAmount - discountAmount;
 

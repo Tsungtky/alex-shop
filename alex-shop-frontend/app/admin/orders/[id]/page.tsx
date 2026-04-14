@@ -159,6 +159,30 @@ export default function AdminOrderDetailPage() {
                     </div>
                 </div>
 
+                {/* キャンセルリクエスト承認/拒否 */}
+                {order.status === "cancel_requested" && (
+                    <div className="flex flex-col gap-4">
+                        <h2 className="text-xs tracking-widest text-amber-500">キャンセルリクエストあり</h2>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleCancel}
+                                className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full text-sm tracking-widest transition"
+                            >
+                                承認（キャンセルする）
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    await api.put(`/api/orders/${id}?status=processing`);
+                                    setOrder((prev) => prev ? { ...prev, status: "processing" } : prev);
+                                }}
+                                className="border border-stone-300 text-stone-600 hover:bg-stone-50 px-6 py-2 rounded-full text-sm tracking-widest transition"
+                            >
+                                拒否（処理に戻す）
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* ステータス更新 */}
                 {order.status !== "cancelled" && (
                     <div className="flex flex-col gap-4">
