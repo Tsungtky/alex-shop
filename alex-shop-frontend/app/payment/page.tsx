@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
@@ -84,7 +84,7 @@ function CheckoutForm() {
     );
 }
 
-export default function PaymentPage() {
+function PaymentContent() {
     const searchParams = useSearchParams();
     const clientSecret = searchParams.get("client_secret");
     const amount = searchParams.get("amount");
@@ -106,5 +106,13 @@ export default function PaymentPage() {
                 <CheckoutForm />
             </Elements>
         </div>
+    );
+}
+
+export default function PaymentPage() {
+    return (
+        <Suspense>
+            <PaymentContent />
+        </Suspense>
     );
 }

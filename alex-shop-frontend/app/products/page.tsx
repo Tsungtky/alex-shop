@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -26,7 +26,7 @@ const CATEGORIES = (tr: typeof t.ja | typeof t.en | typeof t.zh) => [
   { value: "storage", label: tr.storage },
 ];
 
-export default function ProductsPage() {
+function ProductsContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -96,5 +96,13 @@ export default function ProductsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense>
+      <ProductsContent />
+    </Suspense>
   );
 }
