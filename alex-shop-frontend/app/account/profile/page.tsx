@@ -248,7 +248,7 @@ export default function ProfilePage() {
             />
           </div>
           <div>
-            <p className={labelClass}>{tr.confirmPassword}</p>
+            <p className={labelClass}>{tr.confirmNewPassword}</p>
             <input
               type="password"
               className={inputClass}

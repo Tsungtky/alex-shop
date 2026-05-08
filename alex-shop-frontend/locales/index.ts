@@ -95,7 +95,7 @@ export const t = {
         changePassword: "パスワード変更",
         currentPassword: "現在のパスワード",
         newPassword: "新しいパスワード",
-        confirmPassword: "新しいパスワード（確認）",
+        confirmNewPassword: "新しいパスワード（確認）",
         changePasswordBtn: "パスワードを変更する",
 
         // Countries
@@ -259,7 +259,7 @@ export const t = {
         changePassword: "Change Password",
         currentPassword: "Current Password",
         newPassword: "New Password",
-        confirmPassword: "Confirm New Password",
+        confirmNewPassword: "Confirm New Password",
         changePasswordBtn: "Update Password",
 
         // Countries
@@ -421,7 +421,7 @@ export const t = {
         changePassword: "修改密碼",
         currentPassword: "目前密碼",
         newPassword: "新密碼",
-        confirmPassword: "確認新密碼",
+        confirmNewPassword: "確認新密碼",
         changePasswordBtn: "變更密碼",
 
         // Countries
