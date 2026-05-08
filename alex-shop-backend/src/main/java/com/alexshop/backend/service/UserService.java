@@ -1,5 +1,6 @@
 package com.alexshop.backend.service;
 
+import com.alexshop.backend.dto.RegisterRequest;
 import com.alexshop.backend.entity.User;
 import com.alexshop.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,21 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User registerUser(User user){
-        User existing = userRepository.findByEmail(user.getEmail());
+    public User registerUser(RegisterRequest request){
+        User existing = userRepository.findByEmail(request.getEmail());
         if(existing != null){
-            throw new RuntimeException("Email already exists.");
+            throw new RuntimeException("メールアドレスはすでに使用されています");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole("USER");
         user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
+
 
     public void changePassword(Integer userId, String oldPassword, String newPassword, String token) {
         User user = userRepository.findById(userId).orElseThrow();
@@ -50,7 +57,7 @@ public class UserService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail());
         if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password.");
+            throw new RuntimeException("メールアドレスまたはパスワードが正しくありません");
         }
         String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole());
         return new LoginResponse(token, user.getId(), user.getFirstName(), user.getLastName(), user.getRole());

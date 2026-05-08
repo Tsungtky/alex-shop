@@ -3,6 +3,7 @@
 import { useState } from "react";
 import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/locales";
 
@@ -11,12 +12,37 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPasssword] = useState("");
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const { lang } = useLanguage();
   const tr = t[lang];
+
+  const validateEmail = (value: string) => {
+    if (!value) {
+      setEmailError(tr.emailRequired);
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setEmailError(tr.emailInvalid);
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const validatePassword = (value: string) => {
+    if (!value) {
+      setPasswordError(tr.passwordRequired);
+    } else {
+      setPasswordError("");
+    }
+  };
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
     setError("");
+
+    validateEmail(email);
+    validatePassword(password);
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !password) return;
+
     try {
       const res = await api.post("/api/users/login", { email, password });
       localStorage.setItem("token", res.data.token);
@@ -28,10 +54,10 @@ export default function LoginPage() {
       if (res.data.role === "ADMIN") {
         router.push("/admin");
       } else {
-        router.push("/");
+        router.push("/account");
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || "Login Failed");
+      setError(tr.loginError);
     }
   };
 
@@ -42,11 +68,27 @@ export default function LoginPage() {
         <div className="w-8 h-px bg-stone-300 mx-auto mb-8"></div>
         <h2 className="text-xs text-center text-stone-400 tracking-widest mb-8">{tr.memberLogin}</h2>
         {error && <p className="text-rose-400 text-xs text-center bg-rose-50 p-2 rounded-lg mb-4">{error}</p>}
-        <form onSubmit={handleLogin} className="flex flex-col gap-3">
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
-            className="border-0 border-b border-stone-200 bg-transparent p-3 focus:outline-none focus:border-stone-500 text-stone-700 placeholder-stone-300 text-sm transition" />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPasssword(e.target.value)}
-            className="border-0 border-b border-stone-200 bg-transparent p-3 focus:outline-none focus:border-stone-500 text-stone-700 placeholder-stone-300 text-sm transition" />
+        <form noValidate onSubmit={handleLogin} className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <input
+              type="email"
+              placeholder={tr.email}
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); validateEmail(e.target.value); }}
+              className="border-0 border-b border-stone-200 bg-transparent p-3 focus:outline-none focus:border-stone-500 text-stone-700 placeholder-stone-300 text-sm transition"
+            />
+            {emailError && <p className="text-rose-400 text-xs px-1">{emailError}</p>}
+          </div>
+          <div className="flex flex-col gap-1">
+            <input
+              type="password"
+              placeholder={tr.password}
+              value={password}
+              onChange={(e) => { setPasssword(e.target.value); validatePassword(e.target.value); }}
+              className="border-0 border-b border-stone-200 bg-transparent p-3 focus:outline-none focus:border-stone-500 text-stone-700 placeholder-stone-300 text-sm transition"
+            />
+            {passwordError && <p className="text-rose-400 text-xs px-1">{passwordError}</p>}
+          </div>
           <button type="submit" className="mt-4 bg-stone-800 hover:bg-stone-900 text-white p-3 rounded-full text-sm tracking-widest transition">
             {tr.loginBtn}
           </button>

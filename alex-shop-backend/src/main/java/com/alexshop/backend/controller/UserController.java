@@ -2,8 +2,10 @@ package com.alexshop.backend.controller;
 
 import com.alexshop.backend.dto.LoginRequest;
 import com.alexshop.backend.dto.LoginResponse;
+import com.alexshop.backend.dto.RegisterRequest;
 import com.alexshop.backend.entity.User;
 import com.alexshop.backend.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +18,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user){
-        return userService.registerUser(user);
+    public User registerUser(@Valid @RequestBody RegisterRequest request){
+        return userService.registerUser(request);
     }
 
     @GetMapping("/{id}")
@@ -31,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         return userService.login(request);
     }
 

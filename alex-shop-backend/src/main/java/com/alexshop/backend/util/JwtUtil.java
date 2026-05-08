@@ -3,6 +3,8 @@ package com.alexshop.backend.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -10,9 +12,16 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final SecretKey key = Keys.hmacShaKeyFor(
-            "alexshop-secret-key-must-be-32-bytes!!".getBytes()
-    );
+
+    @Value("${jwt.secret}")
+    private  String secretKeyString;
+
+    private SecretKey key;
+
+    @PostConstruct
+    public void init(){
+        this.key = Keys.hmacShaKeyFor(secretKeyString.getBytes());
+    }
 
     public String generateToken(Integer userId, String email, String role) {
         return Jwts.builder()

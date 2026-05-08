@@ -1,8 +1,10 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 export type Lang = "ja" | "en" | "zh";
+
+const VALID_LANGS: Lang[] = ["ja", "en", "zh"];
 
 type LanguageContextType = {
     lang: Lang;
@@ -14,17 +16,18 @@ const LanguageContext = createContext<LanguageContextType>({
     setLang: () => {},
 });
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-    const [lang, setLangState] = useState<Lang>("ja");
-
-    useEffect(() => {
-        const saved = localStorage.getItem("lang") as Lang;
-        if (saved) setLangState(saved);
-    }, []);
+export function LanguageProvider({
+    children,
+    initialLang = "ja",
+}: {
+    children: React.ReactNode;
+    initialLang?: Lang;
+}) {
+    const [lang, setLangState] = useState<Lang>(initialLang);
 
     const setLang = (l: Lang) => {
         setLangState(l);
-        localStorage.setItem("lang", l);
+        document.cookie = `lang=${l}; path=/; max-age=31536000`;
     };
 
     return (

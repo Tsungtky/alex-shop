@@ -1,10 +1,9 @@
 package com.alexshop.backend.controller;
 
 import com.alexshop.backend.entity.Order;
-import com.alexshop.backend.entity.Product;
-import com.alexshop.backend.entity.User;
 import com.alexshop.backend.service.OrderService;
 import com.alexshop.backend.service.ShippingRateService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,15 +24,23 @@ public class OrderController {
 
     //User can get all orders
     @GetMapping("/user/{userId}")
-    public List<Order> getOrderByUserId(@PathVariable Integer userId){
+    public List<Order> getOrderByUserId(@PathVariable Integer userId, HttpServletRequest request){
+        Integer loginUserId = (Integer) request.getAttribute("userId");
+        String role = (String) request.getAttribute("role");
+
+        if (!loginUserId.equals(userId) && !role.equals("ADMIN")) {
+            throw new RuntimeException("権限がありません");
+        }
         return orderService.getOrdersByUserId(userId);
     }
 
     //User/Admin can see one order
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Integer id){
+    public Order getOrderById(@PathVariable Integer id, HttpServletRequest request) {
+        checkOrderAccess(id, request);
         return orderService.getOrderById(id);
     }
+
 
     @GetMapping("/shipping-fee")
     public Integer getShippingFee(@RequestParam String country, @RequestParam Integer userId) {
@@ -47,9 +54,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody Order order){
-        User user = order.getUser();
-        Integer userId = user.getId();
+    public Order createOrder(@RequestBody Order order, HttpServletRequest request){
+        Integer userId = (Integer) request.getAttribute("userId");
         String couponCode = order.getCouponCode();
         String shippingCountry = order.getShippingCountry();
         String shippingFirstName = order.getShippingFirstName();
@@ -77,13 +83,25 @@ public class OrderController {
 
     //User requests cancellation
     @PutMapping("/{id}/request-cancel")
-    public Order requestCancellation(@PathVariable Integer id) {
+    public Order requestCancellation(@PathVariable Integer id, HttpServletRequest request) {
+        checkOrderAccess(id, request);
         return orderService.requestCancellation(id);
     }
 
     //Admin/User can cancel order(not delete)
     @PutMapping("/{id}/cancel")
-    public Order cancelOrder(@PathVariable Integer id){
+    public Order cancelOrder(@PathVariable Integer id, HttpServletRequest request) {
+        checkOrderAccess(id, request);
         return orderService.cancelOrder(id);
+    }
+
+    private void checkOrderAccess(Integer id, HttpServletRequest request) {
+        Integer loginUserId = (Integer) request.getAttribute("userId");
+        String role = (String) request.getAttribute("role");
+        Order order = orderService.getOrderById(id);
+        if (!loginUserId.equals(order.getUser().getId()) && !role.equals("ADMIN")) {
+            throw new RuntimeException("権限がありません");
+        }
+
     }
 }

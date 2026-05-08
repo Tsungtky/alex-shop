@@ -26,7 +26,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/users/login", "/api/users/register").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/orders").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/*/tracking").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/*").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) ->

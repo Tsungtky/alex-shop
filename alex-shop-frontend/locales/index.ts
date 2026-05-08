@@ -57,6 +57,8 @@ export const t = {
         trackingNo: "配送追跡番号",
         requestCancel: "キャンセルをリクエストする",
         cancelRequested: "キャンセルリクエスト中",
+        activeOrders: "進行中",
+        cancelledOrders: "キャンセル済み",
 
         // Order Detail
         orderDetail: "注文詳細",
@@ -65,6 +67,8 @@ export const t = {
         qty: "数量",
         orderItemsLabel: "注文商品",
         noOrders: "注文がありません",
+        shippingInfo: "配送先情報",
+        recipient: "受取人",
 
         // Status
         statusLabels: {
@@ -73,8 +77,10 @@ export const t = {
             shipped: "発送済み",
             delivered: "配達完了",
             cancel_requested: "キャンセル申請中",
+            cancel_rejected: "キャンセル不可",
             cancelled: "キャンセル済み",
         },
+        cancelRejectedMsg: "キャンセルのご要望はお受けできません。お手数ですが、カスタマーサービスまでご連絡ください。",
 
         // Account
         myPage: "マイページ",
@@ -113,8 +119,11 @@ export const t = {
         city: "市区町村",
         postalCode: "郵便番号",
         state: "州",
-        firstName: "First Name",
-        lastName: "Last Name",
+        firstName: "名",
+        lastName: "姓",
+        email: "メールアドレス",
+        password: "パスワード",
+        confirmPassword: "パスワード（確認）",
         qtyLabel: "数量",
 
         // Payment
@@ -129,11 +138,19 @@ export const t = {
         loginBtn: "ログイン",
         noAccount: "アカウントをお持ちでないですか？",
         register: "登録",
+        emailRequired: "メールアドレスを入力してください",
+        emailInvalid: "メールアドレスの形式が正しくありません",
+        passwordRequired: "パスワードを入力してください",
+        loginError: "メールアドレスまたはパスワードが正しくありません",
 
         // Register
         createAccount: "アカウント作成",
         registerBtn: "登録する",
         hasAccount: "すでにアカウントをお持ちですか？",
+        firstNameRequired: "名を入力してください",
+        lastNameRequired: "姓を入力してください",
+        passwordTooShortMsg: "パスワードは8文字以上にしてください",
+        passwordMismatchMsg: "パスワードが一致しません",
 
         // Footer
         footerTagline: "上質なライフスタイルをあなたに。\nこだわりのセレクトショップ。",
@@ -208,6 +225,8 @@ export const t = {
         trackingNo: "Tracking No.",
         requestCancel: "Request Cancellation",
         cancelRequested: "Cancellation Requested",
+        activeOrders: "Active",
+        cancelledOrders: "Cancelled",
 
         orderDetail: "Order Details",
         orderDate: "Order Date",
@@ -215,6 +234,8 @@ export const t = {
         qty: "Qty",
         orderItemsLabel: "Items",
         noOrders: "No orders yet",
+        shippingInfo: "Shipping Info",
+        recipient: "Recipient",
 
         statusLabels: {
             pending: "Pending",
@@ -222,8 +243,10 @@ export const t = {
             shipped: "Shipped",
             delivered: "Delivered",
             cancel_requested: "Cancel Requested",
+            cancel_rejected: "Cannot Cancel",
             cancelled: "Cancelled",
         },
+        cancelRejectedMsg: "Your cancellation request has been declined. Please contact our customer service for assistance.",
 
         myPage: "My Account",
         profile: "Profile",
@@ -262,6 +285,9 @@ export const t = {
         state: "State",
         firstName: "First Name",
         lastName: "Last Name",
+        email: "Email",
+        password: "Password",
+        confirmPassword: "Confirm Password",
         qtyLabel: "Qty",
 
         // Payment
@@ -275,10 +301,18 @@ export const t = {
         loginBtn: "Login",
         noAccount: "Don't have an account?",
         register: "Register",
+        emailRequired: "Please enter your email",
+        emailInvalid: "Please enter a valid email address",
+        passwordRequired: "Please enter your password",
+        loginError: "Incorrect email or password",
 
         createAccount: "Create Account",
         registerBtn: "Register",
         hasAccount: "Already have an account?",
+        firstNameRequired: "Please enter your first name",
+        lastNameRequired: "Please enter your last name",
+        passwordTooShortMsg: "Password must be at least 8 characters",
+        passwordMismatchMsg: "Passwords do not match",
 
         // Footer
         footerTagline: "A quality lifestyle for you.\nA carefully curated select shop.",
@@ -353,6 +387,8 @@ export const t = {
         trackingNo: "配送追蹤號碼",
         requestCancel: "申請取消訂單",
         cancelRequested: "取消申請中",
+        activeOrders: "進行中",
+        cancelledOrders: "已取消",
 
         orderDetail: "訂單詳情",
         orderDate: "訂單日期",
@@ -360,6 +396,8 @@ export const t = {
         qty: "數量",
         orderItemsLabel: "商品明細",
         noOrders: "目前沒有訂單",
+        shippingInfo: "配送資訊",
+        recipient: "收件人",
 
         statusLabels: {
             pending: "待處理",
@@ -367,8 +405,10 @@ export const t = {
             shipped: "已出貨",
             delivered: "已送達",
             cancel_requested: "取消申請中",
+            cancel_rejected: "無法取消",
             cancelled: "已取消",
         },
+        cancelRejectedMsg: "您的取消申請已被拒絕，如需協助請聯絡客服人員。",
 
         myPage: "我的帳號",
         profile: "個人資料",
@@ -405,8 +445,11 @@ export const t = {
         city: "城市",
         postalCode: "郵遞區號",
         state: "州",
-        firstName: "First Name",
-        lastName: "Last Name",
+        firstName: "名字",
+        lastName: "姓氏",
+        email: "電子郵件",
+        password: "密碼",
+        confirmPassword: "確認密碼",
         qtyLabel: "數量",
 
         // Payment
@@ -420,10 +463,18 @@ export const t = {
         loginBtn: "登入",
         noAccount: "還沒有帳號？",
         register: "註冊",
+        emailRequired: "請輸入電子郵件",
+        emailInvalid: "電子郵件格式不正確",
+        passwordRequired: "請輸入密碼",
+        loginError: "電子郵件或密碼錯誤",
 
         createAccount: "建立帳號",
         registerBtn: "註冊",
         hasAccount: "已有帳號？",
+        firstNameRequired: "請輸入名字",
+        lastNameRequired: "請輸入姓氏",
+        passwordTooShortMsg: "密碼至少需要8個字元",
+        passwordMismatchMsg: "密碼不一致",
 
         // Footer
         footerTagline: "為您帶來優質生活。\n精選風格選物店。",

@@ -12,6 +12,7 @@ export default function Header() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { lang, setLang } = useLanguage();
   const tr = t[lang];
@@ -28,6 +29,7 @@ export default function Header() {
   };
 
   useEffect(() => {
+    setMounted(true);
     setIsLoggedIn(!!localStorage.getItem("token"));
     fetchCartCount();
     setMenuOpen(false);
@@ -45,14 +47,39 @@ export default function Header() {
     router.push("/login");
   };
 
-  const hideHeader = pathname === "/login" || pathname === "/register" || pathname.startsWith("/admin");
+  const hideHeader = pathname.startsWith("/admin");
   if (hideHeader) return null;
+
+  const isAuthPage = pathname === "/login" || pathname === "/register";
 
   const LANGS: { value: Lang; label: string }[] = [
     { value: "ja", label: "日" },
     { value: "en", label: "EN" },
     { value: "zh", label: "中" },
   ];
+
+  if (isAuthPage) {
+    return (
+      <header className="bg-white border-b border-stone-200 px-8 py-4 flex items-center justify-between">
+        <Link href="/" className="text-xl font-light tracking-[0.3em] text-stone-800 hover:text-stone-500 transition">
+          ALEXSHOP
+        </Link>
+        <div className="flex items-center gap-1 border border-stone-200 rounded-full px-2 py-1">
+          {LANGS.map((l) => (
+            <button
+              key={l.value}
+              onClick={() => setLang(l.value)}
+              className={`text-xs px-2 py-0.5 rounded-full transition ${
+                lang === l.value ? "bg-stone-800 text-white" : "text-stone-500 hover:text-stone-800"
+              }`}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="bg-white border-b border-stone-200 px-6 py-4">
@@ -97,31 +124,35 @@ export default function Header() {
           </div>
 
           {/* Desktop auth links */}
-          <div className="hidden md:flex items-center gap-3">
-            {isLoggedIn ? (
-              <button onClick={handleLogout} className="text-sm text-stone-600 hover:text-stone-900 transition">
-                {tr.logout}
-              </button>
-            ) : (
-              <>
-                <Link href="/login" className="text-sm text-stone-600 hover:text-stone-900 transition">
-                  {tr.login}
-                </Link>
-                <Link href="/register" className="text-sm bg-stone-800 text-white px-4 py-2 rounded-full hover:bg-stone-900 transition">
-                  {tr.register}
-                </Link>
-              </>
-            )}
-          </div>
+          {mounted && (
+            <div className="hidden md:flex items-center gap-3">
+              {isLoggedIn ? (
+                <button onClick={handleLogout} className="text-sm text-stone-600 hover:text-stone-900 transition">
+                  {tr.logout}
+                </button>
+              ) : (
+                <>
+                  <Link href="/login" className="text-sm text-stone-600 hover:text-stone-900 transition">
+                    {tr.login}
+                  </Link>
+                  <Link href="/register" className="text-sm bg-stone-800 text-white px-4 py-2 rounded-full hover:bg-stone-900 transition">
+                    {tr.register}
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
 
-          {/* Icons - always visible */}
-          <Link href="/account" className="text-stone-600 hover:text-stone-900 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </Link>
-          {isLoggedIn && (
+          {/* Icons */}
+          {pathname !== "/" && (
+            <Link href="/account" className="text-stone-600 hover:text-stone-900 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </Link>
+          )}
+          {mounted && isLoggedIn && (
             <Link href="/orders" className="text-stone-600 hover:text-stone-900 transition">
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
@@ -129,18 +160,20 @@ export default function Header() {
               </svg>
             </Link>
           )}
-          <Link href="/cart" className="relative text-stone-600 hover:text-stone-900 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1"/>
-              <circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-stone-800 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </Link>
+          {pathname !== "/" && (
+            <Link href="/cart" className="relative text-stone-600 hover:text-stone-900 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-stone-800 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          )}
 
           {/* Hamburger button - mobile only */}
           <button
@@ -171,7 +204,7 @@ export default function Header() {
             {tr.storage}
           </Link>
           <div className="border-t border-stone-100 pt-4">
-            {isLoggedIn ? (
+            {mounted && (isLoggedIn ? (
               <button onClick={handleLogout} className="text-left text-sm text-stone-600 hover:text-stone-900 transition">
                 {tr.logout}
               </button>
@@ -184,7 +217,7 @@ export default function Header() {
                   {tr.register}
                 </Link>
               </div>
-            )}
+            ))}
           </div>
         </div>
       )}
