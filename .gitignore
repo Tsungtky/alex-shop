@@ -1,2 +1,3 @@
 .DS_Store
 alex-shop-backend/.env
+alex-shop-backend/src/main/resources/application-local.properties

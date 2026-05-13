@@ -17,6 +17,7 @@ type Product = {
   imageUrl: string;
   category: string;
   stock: number;
+  status: string;
 };
 
 const CATEGORIES = (tr: typeof t.ja | typeof t.en | typeof t.zh) => [
@@ -51,7 +52,12 @@ function ProductsContent() {
 
   const filtered = products
     .filter((p) => getName(p)?.toLowerCase().includes(search.toLowerCase()))
-    .filter((p) => category === "" || p.category === category);
+    .filter((p) => category === "" || p.category === category)
+    .sort((a, b) => {
+      if (a.status === "archived" && b.status !== "archived") return 1;
+      if (a.status !== "archived" && b.status === "archived") return -1;
+      return 0;
+    });
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
@@ -83,12 +89,24 @@ function ProductsContent() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {filtered.map((product) => (
-            <Link href={`/products/${product.id}`} key={product.id}>
-              <div className="border border-stone-200 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer">
+            <Link
+              href={`/products/${product.id}`}
+              key={product.id}
+              className={product.status === "archived" ? "pointer-events-none" : ""}
+            >
+              <div className={`border rounded-xl overflow-hidden transition cursor-pointer ${
+                product.status === "archived"
+                  ? "border-stone-100 opacity-40 grayscale"
+                  : "border-stone-200 hover:shadow-md"
+              }`}>
                 <img src={product.imageUrl} alt={getName(product)} className="w-full h-36 object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
                 <div className="p-3">
                   <p className="text-sm text-stone-800">{getName(product)}</p>
-                  <p className="text-stone-500 text-xs mt-1">¥{product.price.toLocaleString()}</p>
+                  {product.status === "archived" ? (
+                    <p className="text-stone-400 text-xs mt-1">{tr.soldOut}</p>
+                  ) : (
+                    <p className="text-stone-500 text-xs mt-1">¥{product.price.toLocaleString()}</p>
+                  )}
                 </div>
               </div>
             </Link>

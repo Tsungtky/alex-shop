@@ -13,9 +13,15 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    //Get all active products (public)
+    //Get all products, active first then archived
     public List<Product> getAllProducts(){
-        return productRepository.findByStatus("active");
+        return productRepository.findAll().stream()
+                .sorted((a, b) -> {
+                    if ("archived".equals(a.getStatus()) && !"archived".equals(b.getStatus())) return 1;
+                    if (!"archived".equals(a.getStatus()) && "archived".equals(b.getStatus())) return -1;
+                    return 0;
+                })
+                .collect(java.util.stream.Collectors.toList());
     }
 
     //Get all products including archived (admin)

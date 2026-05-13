@@ -118,9 +118,14 @@ export default function AdminInventoryPage() {
     };
 
     const handleArchive = async (id: number) => {
-        if (!confirm("この商品を下架しますか？")) return;
-        await api.put(`/api/products/${id}/archive`);
-        fetchProducts();
+        if (!confirm("この商品を販売停止にしますか？")) return;
+        try {
+            await api.put(`/api/products/${id}/archive`);
+            fetchProducts();
+        } catch (err) {
+            alert("販売停止に失敗しました");
+            console.error(err);
+        }
     };
 
     const handleUnarchive = async (id: number) => {
@@ -234,7 +239,7 @@ export default function AdminInventoryPage() {
                                 ? "border-stone-200 text-stone-400 bg-stone-50"
                                 : "border-green-300 text-green-700 bg-green-100"
                         }`}>
-                            {product.status === "archived" ? "下架済" : "販売中"}
+                            {product.status === "archived" ? "販売停止" : "販売中"}
                         </span>
                         <button
                             onClick={() => setEditingProduct(product)}
@@ -262,7 +267,7 @@ export default function AdminInventoryPage() {
                                 onClick={() => handleArchive(product.id)}
                                 className="text-xs text-red-400 hover:text-red-600 border border-red-200 hover:border-red-400 px-3 py-1 rounded-lg transition"
                             >
-                                下架
+                                販売停止
                             </button>
                         )}
                     </div>
