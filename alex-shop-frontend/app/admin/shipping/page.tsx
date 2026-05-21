@@ -14,6 +14,14 @@ type ShippingRate = {
 
 const EMPTY_FORM = { country: "", baseFee: "", perKgFee: "", isDomestic: false };
 
+const COUNTRY_OPTIONS = [
+    { code: "Taiwan", label: "台湾" },
+    { code: "Japan", label: "日本" },
+    { code: "Korea", label: "韓国" },
+    { code: "USA", label: "アメリカ" },
+    { code: "Thailand", label: "タイ" },
+];
+
 export default function AdminShippingPage() {
     const [rates, setRates] = useState<ShippingRate[]>([]);
     const [form, setForm] = useState(EMPTY_FORM);
@@ -65,8 +73,22 @@ export default function AdminShippingPage() {
             {showForm && (
                 <div className="border border-stone-200 rounded-xl p-6 mb-8 flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-xs text-stone-400 mb-1 block">国</label>
+                            <select
+                                value={form.country}
+                                onChange={(e) => setForm({ ...form, country: e.target.value })}
+                                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm text-stone-700 focus:outline-none focus:border-stone-400 bg-white"
+                            >
+                                <option value="">選択してください</option>
+                                {COUNTRY_OPTIONS.filter(
+                                    (c) => !rates.some((r) => r.country === c.code)
+                                ).map((c) => (
+                                    <option key={c.code} value={c.code}>{c.label}（{c.code}）</option>
+                                ))}
+                            </select>
+                        </div>
                         {[
-                            { key: "country", label: "国" },
                             { key: "baseFee", label: "基本送料（¥）" },
                             { key: "perKgFee", label: "1kgあたり（¥）" },
                         ].map(({ key, label }) => (
