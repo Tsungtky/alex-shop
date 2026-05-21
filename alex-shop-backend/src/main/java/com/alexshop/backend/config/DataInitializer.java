@@ -21,7 +21,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.findByEmail("admin@test.com") == null) {
+        if (!userRepository.existsByEmail("admin@test.com")) {
             User admin = new User();
             admin.setFirstName("Admin");
             admin.setLastName("User");
